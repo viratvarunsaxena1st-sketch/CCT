@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognitive Training: PASAT Flex</title>
+    <style>
+        :root {
+            --bg: #121212;
+            --surface: #1e1e1e;
+            --text: #ffffff;
+            --text-secondary: #aaaaaa;
+            --primary: #4caf50;
+            --primary-hover: #45a049;
+            --danger: #f44336;
+            --danger-hover: #da190b;
+            --border: #333333;
+            --font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-family);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        header {
+            background-color: var(--surface);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .container {
+            flex: 1;
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* --- Forms & Setup UI --- */
+        .card {
+            background-color: var(--surface);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: var(--text-secondary);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .form-row > .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        select, input[type="number"], input[type="range"] {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            user-select: none;
+            margin-top: 0.5rem;
+        }
+
+        .checkbox-container input {
+            width: 1.2rem;
+            height: 1.2rem;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button.danger {
+            background-color: var(--danger);
+        }
+
+        button.danger:hover {
+            background-color: var(--danger-hover);
+        }
+
+        button.secondary {
+            background-color: transparent;
+            border: 1px solid var(--text-secondary);
+            color: var(--text);
+        }
+
+        button.secondary:hover {
+            background-color: var(--border);
+        }
+
+        /* --- Task UI --- */
+        #task-ui {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            justify-content: center;
+        }
+
+        .hud {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            background: var(--surface);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .hud-item {
+            text-align: center;
+        }
+
+        .hud-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .hud-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        #stimulus-container {
+            height: 150px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        #digit-display {
+            font-size: 4rem;
+            font-weight: bold;
+            line-height: 1;
+            color: var(--text-secondary);
+            transition: color 0.1s;
+        }
+
+        #feedback-display {
+            position: absolute;
+            top: -20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* --- Keypad --- */
+        .keypad-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .input-buffer-display {
+            width: 100%;
+            height: 50px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        .keypad button {
+            padding: 1.25rem 0.5rem;
+            font-size: 1.5rem;
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            touch-action: manipulation;
+        }
+
+        .keypad button:active {
+            background-color: var(--border);
+            border-color: var(--primary);
+        }
+
+        #btn-18 {
+            grid-column: span 4;
+            max-width: 50%;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* --- Results UI --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-box {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        canvas {
+            background: var(--surface);
+            width: 100%;
+            max-width: 100%;
+            height: 300px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 600px) {
+            .hud {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            .hud-item {
+                flex: 1 1 40%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h2>PASAT Flex</h2>
+        <div id="top-controls" class="hidden">
+            <button class="secondary" id="btn-fullscreen">Fullscreen</button>
+            <button class="danger" id="btn-quit" style="margin-left: 0.5rem;">Quit</button>
+        </div>
+    </header>
+
+    <!-- Setup Screen -->
+    <div id="setup-screen" class="container">
+        <div class="card">
+            <h3>Configuration</h3>
+            <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">Customize the PASAT session parameters below. Task is Audio-Only.</p>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="config-mode">Task Mode</label>
+                    <select id="config-mode">
+                        <option value="adaptive">Adaptive Mode</option>
+                        <option value="fixed">Minimal (Fixed-Speed) Mode</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="config-time">Session Duration (Minutes)</label>
+                    <select id="config-time">
+                        <!-- Populated via JS -->
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="config-isi">Starting ISI / Fixed ISI (ms)</label>
+                    <select id="config-isi">
+                        <!-- Populated via JS -->
+                    </select>
+                </div>
+            </div>
+
+            <div id="audio-settings" class="form-row">
+                <div class="form-group">
+                    <label for="config-voice">Voice</label>
+                    <select id="config-voice"></select>
+                </div>
+                <div class="form-group">
+                    <label for="config-rate">Speech Rate</label>
+                    <input type="range" id="config-rate" min="0.5" max="3" step="0.1" value="1.5">
+                    <div style="text-align: center; color: var(--text-secondary);"><span id="rate-val">1.5</span>x</div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="config-error-beep" checked>
+                        <span>Play error beep on incorrect or missed answers</span>
+                    </label>
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+                <button id="btn-practice" class="secondary">Start Practice (10 Trials)</button>
+                <button id="btn-start">Start Main Session</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Screen -->
+    <div id="task-screen" class="container hidden">
+        <div id="task-ui">
+            <div class="hud">
+                <div class="hud-item">
+                    <div class="hud-label">Time Elapsed</div>
+                    <div class="hud-value" id="hud-elapsed">00:00</div>
+                </div>
+                <div class="hud-item">
+                    <div class="hud-label">Time Remaining</div>
+                    <div class="hud-value" id="hud-remaining">00:00</div>
+                </div>
+                <div class="hud-item">
+                    <div class="hud-label">Current ISI</div>
+                    <div class="hud-value" id="hud-isi">3000ms</div>
+                </div>
+                <div class="hud-item">
+                    <div class="hud-label">Mode</div>
+                    <div class="hud-value" id="hud-mode-display" style="font-size: 1.2rem; margin-top: 0.3rem;">Adaptive</div>
+                </div>
+                <div class="hud-item" style="display: flex; align-items: center;">
+                    <button id="btn-pause" class="secondary" style="padding: 0.5rem 1rem;">Pause</button>
+                </div>
+            </div>
+
+            <div id="stimulus-container">
+                <div id="feedback-display"></div>
+                <div id="digit-display">Ready</div>
+            </div>
+
+            <div class="keypad-container">
+                <div class="input-buffer-display" id="input-buffer">_</div>
+                <div class="keypad" id="numpad">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="results-screen" class="container hidden">
+        <div class="card">
+            <h2 style="margin-bottom: 1.5rem;">Session Complete</h2>
+            
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="hud-label">Accuracy</div>
+                    <div class="hud-value" id="res-accuracy">0%</div>
+                </div>
+                <div class="stat-box">
+                    <div class="hud-label">Correct</div>
+                    <div class="hud-value" id="res-correct">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="hud-label">Incorrect</div>
+                    <div class="hud-value" id="res-incorrect">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="hud-label">Omissions</div>
+                    <div class="hud-value" id="res-omissions">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="hud-label">Mean RT</div>
+                    <div class="hud-value" id="res-mean-rt">0ms</div>
+                </div>
+                <div class="stat-box">
+                    <div class="hud-label">Median RT</div>
+                    <div class="hud-value" id="res-median-rt">0ms</div>
+                </div>
+                <div class="stat-box">
+                    <div class="hud-label">Final ISI</div>
+                    <div class="hud-value" id="res-final-isi">0ms</div>
+                </div>
+                <div class="stat-box">
+                    <div class="hud-label">Min ISI</div>
+                    <div class="hud-value" id="res-min-isi">0ms</div>
+                </div>
+                <div class="stat-box">
+                    <div class="hud-label">Reversals</div>
+                    <div class="hud-value" id="res-reversals">0</div>
+                </div>
+            </div>
+
+            <canvas id="isi-chart" width="800" height="300"></canvas>
+
+            <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
+                <button id="btn-export-csv">Export CSV</button>
+                <button id="btn-export-json">Export JSON</button>
+                <button id="btn-home" class="secondary" style="margin-left: auto;">Return Home</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * State & Configuration
+         */
+        const state = {
+            isRunning: false,
+            isPaused: false,
+            isPractice: false,
+            mode: 'adaptive',
+            errorBeep: true,
+            
+            sessionDurationMs: 0,
+            sessionStartTime: 0,
+            pauseStartTime: 0,
+            totalPausedTime: 0,
+
+            currentISI: 3000,
+            minAchievedISI: 3000,
+            reversals: 0,
+            lastDirection: null,
+            consecCorrect: 0,
+            consecIncorrect: 0,
+
+            trialCount: 0,
+            prevDigit: null,
+            currDigit: null,
+            
+            trialStartTime: 0,
+            nextOnset: 0,
+            
+            userAnswer: null,
+            submitTime: null,
+            
+            history: [], 
+            
+            timerId: null,
+            uiTimerId: null,
+            visualClearTimerId: null
+        };
+
+        const limits = {
+            minISI: 100,
+            maxISI: 5000,
+            stepISI: 100
+        };
+
+        let synthVoices = [];
+        let kbBuffer = '';
+        let kbTimer = null;
+
+        /**
+         * DOM Elements
+         */
+        const screens = {
+            setup: document.getElementById('setup-screen'),
+            task: document.getElementById('task-screen'),
+            results: document.getElementById('results-screen')
+        };
+        const controls = document.getElementById('top-controls');
+
+        // Form elements
+        const formMode = document.getElementById('config-mode');
+        const formTime = document.getElementById('config-time');
+        const formISI = document.getElementById('config-isi');
+        const formVoice = document.getElementById('config-voice');
+        const formRate = document.getElementById('config-rate');
+        const formErrorBeep = document.getElementById('config-error-beep');
+
+        // HUD elements
+        const hudElapsed = document.getElementById('hud-elapsed');
+        const hudRemaining = document.getElementById('hud-remaining');
+        const hudISI = document.getElementById('hud-isi');
+        const hudMode = document.getElementById('hud-mode-display');
+        const displayDigit = document.getElementById('digit-display');
+        const displayFeedback = document.getElementById('feedback-display');
+        const displayBuffer = document.getElementById('input-buffer');
+        const btnPause = document.getElementById('btn-pause');
+
+        /**
+         * Initialization & UI Setup
+         */
+        function init() {
+            for(let i=1; i<=60; i++) {
+                formTime.add(new Option(`${i} Minute${i>1?'s':''}`, i));
+            }
+            formTime.value = 5;
+
+            for(let i=limits.minISI; i<=limits.maxISI; i+=limits.stepISI) {
+                formISI.add(new Option(`${i} ms`, i));
+            }
+            formISI.value = 3000;
+
+            if ('speechSynthesis' in window) {
+                synthVoices = window.speechSynthesis.getVoices();
+                if(synthVoices.length !== 0) populateVoices();
+                window.speechSynthesis.onvoiceschanged = () => {
+                    synthVoices = window.speechSynthesis.getVoices();
+                    populateVoices();
+                };
+            }
+
+            formRate.addEventListener('input', (e) => document.getElementById('rate-val').innerText = e.target.value);
+            document.getElementById('btn-practice').addEventListener('click', () => startSession(true));
+            document.getElementById('btn-start').addEventListener('click', () => startSession(false));
+            document.getElementById('btn-quit').addEventListener('click', endSession);
+            btnPause.addEventListener('click', togglePause);
+            document.getElementById('btn-fullscreen').addEventListener('click', toggleFullscreen);
+            document.getElementById('btn-home').addEventListener('click', showSetup);
+            document.getElementById('btn-export-csv').addEventListener('click', exportCSV);
+            document.getElementById('btn-export-json').addEventListener('click', exportJSON);
+
+            buildKeypad();
+            document.addEventListener('keydown', handleKeyboard);
+        }
+
+        function populateVoices() {
+            formVoice.innerHTML = '';
+            synthVoices.forEach((voice, i) => {
+                let opt = new Option(`${voice.name} (${voice.lang})`, i);
+                if(voice.default) opt.selected = true;
+                formVoice.add(opt);
+            });
+        }
+
+        function buildKeypad() {
+            const pad = document.getElementById('numpad');
+            for(let i = 2; i <= 18; i++) {
+                let btn = document.createElement('button');
+                btn.innerText = i;
+                btn.id = `btn-${i}`;
+                btn.addEventListener('click', () => submitAnswer(i));
+                pad.appendChild(btn);
+            }
+        }
+
+        /**
+         * Navigation
+         */
+        function switchScreen(screenId) {
+            Object.values(screens).forEach(s => s.classList.add('hidden'));
+            screens[screenId].classList.remove('hidden');
+            controls.classList.toggle('hidden', screenId === 'setup');
+        }
+
+        function showSetup() {
+            switchScreen('setup');
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => console.log(err));
+            } else {
+                if(document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+
+        /**
+         * Session Control
+         */
+        function startSession(practice = false) {
+            state.isPractice = practice;
+            state.mode = formMode.value;
+            state.currentISI = parseInt(formISI.value);
+            state.sessionDurationMs = parseInt(formTime.value) * 60 * 1000;
+            state.errorBeep = formErrorBeep.checked;
+            
+            state.isRunning = true;
+            state.isPaused = false;
+            state.totalPausedTime = 0;
+            state.minAchievedISI = state.currentISI;
+            state.reversals = 0;
+            state.lastDirection = null;
+            state.consecCorrect = 0;
+            state.consecIncorrect = 0;
+            state.trialCount = 0;
+            state.prevDigit = null;
+            state.currDigit = null;
+            state.history = [];
+            state.userAnswer = null;
+            state.submitTime = null;
+            
+            hudMode.innerText = practice ? 'Practice' : (state.mode === 'adaptive' ? 'Adaptive' : 'Fixed');
+            btnPause.innerText = 'Pause';
+            displayDigit.innerText = 'Ready';
+            displayDigit.style.color = 'var(--text-secondary)';
+            displayBuffer.innerText = '_';
+            
+            switchScreen('task');
+
+            let u = new SpeechSynthesisUtterance('');
+            window.speechSynthesis.speak(u);
+
+            setTimeout(() => {
+                if(!state.isRunning) return;
+                state.sessionStartTime = performance.now();
+                state.nextOnset = state.sessionStartTime;
+                state.uiTimerId = setInterval(updateHUD, 200);
+                taskLoop();
+            }, 1500);
+        }
+
+        function togglePause() {
+            if(!state.isRunning) return;
+            state.isPaused = !state.isPaused;
+            if(state.isPaused) {
+                btnPause.innerText = 'Resume';
+                state.pauseStartTime = performance.now();
+                clearTimeout(state.timerId);
+                clearTimeout(state.visualClearTimerId);
+                displayDigit.innerText = 'PAUSED';
+                window.speechSynthesis.cancel();
+            } else {
+                btnPause.innerText = 'Pause';
+                let pauseDuration = performance.now() - state.pauseStartTime;
+                state.totalPausedTime += pauseDuration;
+                state.nextOnset += pauseDuration;
+                displayDigit.innerText = '•';
+                taskLoop();
+            }
+        }
+
+        function endSession() {
+            state.isRunning = false;
+            clearTimeout(state.timerId);
+            clearInterval(state.uiTimerId);
+            clearTimeout(state.visualClearTimerId);
+            window.speechSynthesis.cancel();
+            
+            if(state.isPractice) {
+                alert("Practice complete! You can now start the main session.");
+                showSetup();
+            } else {
+                generateResults();
+                switchScreen('results');
+            }
+        }
+
+        /**
+         * Core Task Loop
+         */
+        function taskLoop() {
+            if(!state.isRunning || state.isPaused) return;
+
+            const now = performance.now();
+            const elapsedTotal = now - state.sessionStartTime - state.totalPausedTime;
+            
+            if(!state.isPractice && elapsedTotal >= state.sessionDurationMs) {
+                endSession();
+                return;
+            }
+
+            if(now >= state.nextOnset) {
+                executeTrial(now);
+            }
+
+            state.timerId = setTimeout(taskLoop, 5);
+        }
+
+        function executeTrial(now) {
+            if(state.trialCount > 1) {
+                gradeResponse();
+            }
+
+            if(state.isPractice && state.trialCount >= 11) {
+                endSession();
+                return;
+            }
+
+            state.trialCount++;
+            state.prevDigit = state.currDigit;
+            
+            let nextD = Math.floor(Math.random() * 9) + 1;
+            while(nextD === state.currDigit) {
+                nextD = Math.floor(Math.random() * 9) + 1;
+            }
+            state.currDigit = nextD;
+
+            state.userAnswer = null;
+            state.submitTime = null;
+            state.trialStartTime = now;
+            
+            state.nextOnset = now + state.currentISI;
+            presentStimulus();
+        }
+
+        function presentStimulus() {
+            displayBuffer.innerText = '_';
+            kbBuffer = ''; 
+            
+            window.speechSynthesis.cancel();
+            let u = new SpeechSynthesisUtterance(state.currDigit.toString());
+            const voiceIdx = formVoice.value;
+            if(synthVoices[voiceIdx]) u.voice = synthVoices[voiceIdx];
+            u.rate = parseFloat(formRate.value);
+            window.speechSynthesis.speak(u);
+
+            displayDigit.innerText = '•';
+            displayDigit.style.color = 'var(--primary)';
+
+            state.visualClearTimerId = setTimeout(() => {
+                if(!state.isRunning || state.isPaused) return;
+                displayDigit.style.color = 'var(--text-secondary)'; 
+            }, 150);
+        }
+
+        /**
+         * Response Logic
+         */
+        function handleKeyboard(e) {
+            if(!state.isRunning || state.isPaused) return;
+            const key = e.key;
+            
+            if(key >= '0' && key <= '9') {
+                if (kbBuffer === '1') {
+                    const val = parseInt('1' + key);
+                    if (val >= 10 && val <= 18) {
+                        submitAnswer(val);
+                    }
+                    kbBuffer = '';
+                    clearTimeout(kbTimer);
+                } else if (key === '1') {
+                    kbBuffer = '1';
+                    kbTimer = setTimeout(() => { 
+                        if(kbBuffer === '1') {
+                            submitAnswer(1); 
+                            kbBuffer = '';
+                        }
+                    }, 400);
+                } else if (key >= '2' && key <= '9') {
+                    submitAnswer(parseInt(key));
+                }
+            }
+        }
+
+        function submitAnswer(val) {
+            if(state.trialCount < 2) return; 
+
+            state.submitTime = performance.now();
+            state.userAnswer = val;
+            
+            displayBuffer.innerText = val;
+            
+            if(state.isPractice) {
+                const isCorrect = val === (state.prevDigit + state.currDigit);
+                displayFeedback.innerText = isCorrect ? 'Correct' : 'Incorrect';
+                displayFeedback.style.color = isCorrect ? 'var(--primary)' : 'var(--danger)';
+                
+                if(window.feedbackTimeout) clearTimeout(window.feedbackTimeout);
+                window.feedbackTimeout = setTimeout(() => displayFeedback.innerText = '', 500);
+            }
+        }
+
+        function playErrorBeep() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                oscillator.type = 'sawtooth'; 
+                oscillator.frequency.setValueAtTime(180, audioCtx.currentTime); // Low error tone
+                
+                gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25); 
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + 0.25);
+            } catch (e) {
+                console.error("Synthesizer error beep failed:", e);
+            }
+        }
+
+        function gradeResponse() {
+            const isSubmitted = state.userAnswer !== null;
+            const correctSum = state.prevDigit + state.currDigit;
+            const rt = isSubmitted ? (state.submitTime - state.trialStartTime) : null;
+            
+            const isCorrect = isSubmitted && (state.userAnswer === correctSum);
+            const isPremature = isSubmitted && (rt < 150);
+            
+            let correctness = 'omission';
+            if (isSubmitted) correctness = isCorrect ? 'correct' : 'incorrect';
+
+            // Auditory negative feedback loop configuration option trigger
+            if (!isCorrect && state.errorBeep) {
+                playErrorBeep();
+            }
+
+            state.history.push({
+                trial: state.trialCount - 1,
+                currDigit: state.currDigit,
+                prevDigit: state.prevDigit,
+                userAnswer: state.userAnswer,
+                correctAnswer: correctSum,
+                correctness: correctness,
+                rt: rt ? Math.round(rt) : null,
+                isPremature: isPremature,
+                isi: state.currentISI,
+                mode: state.mode
+            });
+
+            if (!state.isPractice && state.mode === 'adaptive') {
+                if (isCorrect) {
+                    state.consecCorrect++;
+                    state.consecIncorrect = 0;
+                    if (state.consecCorrect >= 4) {
+                        changeISI(-limits.stepISI, 'down');
+                        state.consecCorrect = 0;
+                    }
+                } else {
+                    state.consecIncorrect++;
+                    state.consecCorrect = 0;
+                    if (state.consecIncorrect >= 4) {
+                        changeISI(limits.stepISI, 'up');
+                        state.consecIncorrect = 0;
+                    }
+                }
+            }
+        }
+
+        function changeISI(delta, direction) {
+            let newISI = Math.max(limits.minISI, Math.min(limits.maxISI, state.currentISI + delta));
+            if (newISI !== state.currentISI) {
+                state.currentISI = newISI;
+                if(state.currentISI < state.minAchievedISI) state.minAchievedISI = state.currentISI;
+                
+                if (state.lastDirection && state.lastDirection !== direction) {
+                    state.reversals++;
+                }
+                state.lastDirection = direction;
+            }
+        }
+
+        /**
+         * HUD & Timers
+         */
+        function updateHUD() {
+            if(!state.isRunning || state.isPaused) return;
+            const now = performance.now();
+            const elapsed = now - state.sessionStartTime - state.totalPausedTime;
+            const remaining = Math.max(0, state.sessionDurationMs - elapsed);
+
+            hudElapsed.innerText = formatTime(elapsed);
+            hudRemaining.innerText = state.isPractice ? '--:--' : formatTime(remaining);
+            hudISI.innerText = state.currentISI + ' ms';
+        }
+
+        function formatTime(ms) {
+            const totalSec = Math.floor(ms / 1000);
+            const m = Math.floor(totalSec / 60).toString().padStart(2, '0');
+            const s = (totalSec % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        }
+
+        /**
+         * Analytics & Results
+         */
+        function generateResults() {
+            const data = state.history;
+            if(data.length === 0) return;
+
+            const correctCount = data.filter(d => d.correctness === 'correct').length;
+            const incorrectCount = data.filter(d => d.correctness === 'incorrect').length;
+            const omissionCount = data.filter(d => d.correctness === 'omission').length;
+            
+            const rts = data.filter(d => d.rt !== null).map(d => d.rt).sort((a,b)=>a-b);
+            const meanRt = rts.length ? Math.round(rts.reduce((a,b)=>a+b, 0) / rts.length) : 0;
+            const medianRt = rts.length ? rts[Math.floor(rts.length/2)] : 0;
+            const accuracy = Math.round((correctCount / data.length) * 100) || 0;
+
+            document.getElementById('res-accuracy').innerText = `${accuracy}%`;
+            document.getElementById('res-correct').innerText = correctCount;
+            document.getElementById('res-incorrect').innerText = incorrectCount;
+            document.getElementById('res-omissions').innerText = omissionCount;
+            document.getElementById('res-mean-rt').innerText = `${meanRt}ms`;
+            document.getElementById('res-median-rt').innerText = `${medianRt}ms`;
+            document.getElementById('res-final-isi').innerText = `${state.currentISI}ms`;
+            document.getElementById('res-min-isi').innerText = `${state.minAchievedISI}ms`;
+            document.getElementById('res-reversals').innerText = state.reversals;
+
+            drawGraph();
+        }
+
+        function drawGraph() {
+            const canvas = document.getElementById('isi-chart');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const data = state.history;
+            if(data.length < 2) return;
+
+            const padding = 30;
+            const width = canvas.width - padding * 2;
+            const height = canvas.height - padding * 2;
+
+            const maxISI = Math.max(1000, ...data.map(d => d.isi));
+            const minISI = Math.min(...data.map(d => d.isi), limits.minISI);
+            const range = maxISI - minISI || 1;
+
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            for(let i=0; i<=5; i++) {
+                let y = padding + (height * (i/5));
+                ctx.moveTo(padding, y);
+                ctx.lineTo(padding + width, y);
+            }
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#4caf50';
+            ctx.lineWidth = 3;
+            
+            data.forEach((d, i) => {
+                const x = padding + (i / (data.length - 1)) * width;
+                const normalizedY = (d.isi - minISI) / range;
+                const y = padding + height - (normalizedY * height); 
+                
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+
+            ctx.fillStyle = '#aaa';
+            ctx.font = '12px system-ui';
+            ctx.fillText(`${maxISI}ms`, 2, padding + 4);
+            ctx.fillText(`${minISI}ms`, 2, padding + height + 4);
+        }
+
+        /**
+         * Exports
+         */
+        function exportCSV() {
+            if(state.history.length === 0) return;
+            const headers = "trial,currDigit,prevDigit,userAnswer,correctAnswer,correctness,rt,isPremature,isi,mode\n";
+            const rows = state.history.map(d => 
+                `${d.trial},${d.currDigit},${d.prevDigit},${d.userAnswer||''},${d.correctAnswer},${d.correctness},${d.rt||''},${d.isPremature},${d.isi},${d.mode}`
+            ).join('\n');
+            downloadFile(headers + rows, `pasat_data_${Date.now()}.csv`, 'text/csv');
+        }
+
+        function exportJSON() {
+            if(state.history.length === 0) return;
+            const data = JSON.stringify(state.history, null, 2);
+            downloadFile(data, `pasat_data_${Date.now()}.json`, 'application/json');
+        }
+
+        function downloadFile(content, filename, type) {
+            const blob = new Blob([content], { type: type });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
