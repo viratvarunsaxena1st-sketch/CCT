@@ -3,19 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cognitive Training: PASAT Flex</title>
+    <title>aPASAT ergo CCT</title>
+    <!-- Added Inter font for a cleaner, modern look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #121212;
-            --surface: #1e1e1e;
-            --text: #ffffff;
-            --text-secondary: #aaaaaa;
-            --primary: #4caf50;
-            --primary-hover: #45a049;
-            --danger: #f44336;
-            --danger-hover: #da190b;
-            --border: #333333;
-            --font-family: system-ui, -apple-system, sans-serif;
+            /* Modern Dark Theme (Slate & Blue) */
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --surface-hover: #334155;
+            --text: #f8fafc;
+            --text-secondary: #94a3b8;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --success: #10b981;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --border: #334155;
+            --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
 
         * {
@@ -26,6 +34,7 @@
 
         body {
             background-color: var(--bg);
+            background-image: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%);
             color: var(--text);
             font-family: var(--font-family);
             line-height: 1.6;
@@ -36,17 +45,27 @@
         }
 
         header {
-            background-color: var(--surface);
+            background-color: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
             padding: 1rem 2rem;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        header h2 {
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--text);
         }
 
         .container {
             flex: 1;
-            padding: 2rem;
+            padding: 2.5rem 2rem;
             max-width: 900px;
             margin: 0 auto;
             width: 100%;
@@ -59,11 +78,16 @@
         /* --- Forms & Setup UI --- */
         .card {
             background-color: var(--surface);
-            border-radius: 8px;
-            padding: 2rem;
-            margin-bottom: 1rem;
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-bottom: 1.5rem;
             border: 1px solid var(--border);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
         }
 
         .form-group {
@@ -73,48 +97,54 @@
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
-            font-weight: bold;
+            font-weight: 600;
             color: var(--text-secondary);
+            font-size: 0.9rem;
         }
 
         .form-row {
             display: flex;
-            gap: 1rem;
+            gap: 1.5rem;
             flex-wrap: wrap;
         }
 
         .form-row > .form-group {
             flex: 1;
-            min-width: 200px;
+            min-width: 220px;
         }
 
         select, input[type="number"], input[type="range"] {
             width: 100%;
-            padding: 0.75rem;
+            padding: 0.875rem 1rem;
             background-color: var(--bg);
             color: var(--text);
             border: 1px solid var(--border);
-            border-radius: 4px;
+            border-radius: 8px;
             font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            appearance: none;
+            cursor: pointer;
         }
 
         select:focus, input:focus {
             outline: none;
             border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
         }
 
         .checkbox-container {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
             cursor: pointer;
             user-select: none;
             margin-top: 0.5rem;
+            padding: 0.5rem 0;
         }
 
         .checkbox-container input {
-            width: 1.2rem;
-            height: 1.2rem;
+            width: 1.25rem;
+            height: 1.25rem;
             accent-color: var(--primary);
             cursor: pointer;
         }
@@ -123,16 +153,24 @@
             background-color: var(--primary);
             color: white;
             border: none;
-            padding: 0.75rem 1.5rem;
+            padding: 0.875rem 1.75rem;
             font-size: 1rem;
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.2s;
-            font-weight: bold;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
         }
 
         button:hover {
             background-color: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+            box-shadow: var(--shadow-sm);
         }
 
         button.danger {
@@ -145,12 +183,14 @@
 
         button.secondary {
             background-color: transparent;
-            border: 1px solid var(--text-secondary);
+            border: 1px solid var(--border);
             color: var(--text);
+            box-shadow: none;
         }
 
         button.secondary:hover {
-            background-color: var(--border);
+            background-color: var(--surface-hover);
+            border-color: var(--text-secondary);
         }
 
         /* --- Task UI --- */
@@ -159,7 +199,8 @@
             flex-direction: column;
             align-items: center;
             height: 100%;
-            justify-content: center;
+            justify-content: flex-start;
+            padding-top: 2rem;
         }
 
         .hud {
@@ -167,52 +208,62 @@
             justify-content: space-between;
             width: 100%;
             background: var(--surface);
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
+            padding: 1.25rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 3rem;
             border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
             font-variant-numeric: tabular-nums;
         }
 
         .hud-item {
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .hud-value {
             font-size: 1.5rem;
-            font-weight: bold;
+            font-weight: 700;
             color: var(--primary);
         }
 
         .hud-label {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
+            font-weight: 600;
             color: var(--text-secondary);
             text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
         }
 
         #stimulus-container {
-            height: 150px;
+            height: 160px;
             width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
             position: relative;
         }
 
         #digit-display {
-            font-size: 4rem;
-            font-weight: bold;
+            font-size: 5rem;
+            font-weight: 700;
             line-height: 1;
             color: var(--text-secondary);
-            transition: color 0.1s;
+            transition: color 0.15s ease-out;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
 
         #feedback-display {
             position: absolute;
-            top: -20px;
-            font-size: 1.5rem;
-            font-weight: bold;
+            top: -30px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
         /* --- Keypad --- */
@@ -220,86 +271,111 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1rem;
+            gap: 1.5rem;
             width: 100%;
-            max-width: 400px;
+            max-width: 600px; /* Widened to fit 6 columns nicely */
         }
 
         .input-buffer-display {
             width: 100%;
-            height: 50px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
+            height: 60px;
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
         }
 
         .keypad {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 0.5rem;
+            grid-template-columns: repeat(6, 1fr); /* 6 Columns as requested */
+            gap: 0.75rem;
             width: 100%;
         }
 
         .keypad button {
-            padding: 1.25rem 0.5rem;
-            font-size: 1.5rem;
+            padding: 1.5rem 0;
+            font-size: 1.75rem;
+            font-weight: 600;
             background-color: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: 12px;
+            color: var(--text);
             touch-action: manipulation;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.15s ease;
+        }
+
+        .keypad button:hover {
+            background-color: var(--surface-hover);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            color: var(--primary);
         }
 
         .keypad button:active {
-            background-color: var(--border);
+            background-color: var(--primary);
+            color: white;
             border-color: var(--primary);
-        }
-
-        #btn-18 {
-            grid-column: span 4;
-            max-width: 50%;
-            margin: 0 auto;
-            width: 100%;
+            transform: translateY(1px);
+            box-shadow: none;
         }
 
         /* --- Results UI --- */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 1rem;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
         }
 
         .stat-box {
-            background: var(--surface);
-            padding: 1.5rem;
-            border-radius: 8px;
+            background: var(--bg);
+            padding: 1.5rem 1rem;
+            border-radius: 12px;
             text-align: center;
             border: 1px solid var(--border);
+            transition: transform 0.2s;
+        }
+        
+        .stat-box:hover {
+            transform: translateY(-2px);
+            border-color: var(--surface-hover);
         }
 
         canvas {
-            background: var(--surface);
+            background: var(--bg);
             width: 100%;
             max-width: 100%;
             height: 300px;
-            border-radius: 8px;
+            border-radius: 12px;
             border: 1px solid var(--border);
             margin-bottom: 2rem;
+            padding: 1rem;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             .hud {
                 flex-wrap: wrap;
-                gap: 1rem;
+                gap: 1.5rem;
+                padding: 1rem;
             }
             .hud-item {
                 flex: 1 1 40%;
+            }
+            .keypad {
+                gap: 0.5rem;
+            }
+            .keypad button {
+                font-size: 1.5rem;
+                padding: 1.25rem 0;
+                border-radius: 8px;
             }
         }
     </style>
@@ -307,10 +383,10 @@
 <body>
 
     <header>
-        <h2>PASAT Flex</h2>
+        <h2>CCT</h2>
         <div id="top-controls" class="hidden">
-            <button class="secondary" id="btn-fullscreen">Fullscreen</button>
-            <button class="danger" id="btn-quit" style="margin-left: 0.5rem;">Quit</button>
+            <button class="secondary" id="btn-fullscreen" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Fullscreen</button>
+            <button class="danger" id="btn-quit" style="margin-left: 0.5rem; padding: 0.5rem 1rem; font-size: 0.9rem;">Quit</button>
         </div>
     </header>
 
@@ -318,7 +394,7 @@
     <div id="setup-screen" class="container">
         <div class="card">
             <h3>Configuration</h3>
-            <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">Customize the PASAT session parameters below. Task is Audio-Only.</p>
+            <p style="margin-bottom: 2rem; color: var(--text-secondary);">Customize the PASAT session parameters below. Task is Audio-Only.</p>
             
             <div class="form-row">
                 <div class="form-group">
@@ -329,7 +405,7 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="config-time">Session Duration (Minutes)</label>
+                    <label for="config-time">Session Duration</label>
                     <select id="config-time">
                         <!-- Populated via JS -->
                     </select>
@@ -338,7 +414,7 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="config-isi">Starting ISI / Fixed ISI (ms)</label>
+                    <label for="config-isi">Starting ISI / Fixed ISI</label>
                     <select id="config-isi">
                         <!-- Populated via JS -->
                     </select>
@@ -347,13 +423,13 @@
 
             <div id="audio-settings" class="form-row">
                 <div class="form-group">
-                    <label for="config-voice">Voice</label>
+                    <label for="config-voice">Synthesizer Voice</label>
                     <select id="config-voice"></select>
                 </div>
                 <div class="form-group">
                     <label for="config-rate">Speech Rate</label>
                     <input type="range" id="config-rate" min="0.5" max="3" step="0.1" value="1.5">
-                    <div style="text-align: center; color: var(--text-secondary);"><span id="rate-val">1.5</span>x</div>
+                    <div style="text-align: center; color: var(--text-secondary); margin-top: 0.5rem; font-weight: 600;"><span id="rate-val">1.5</span>x</div>
                 </div>
             </div>
 
@@ -361,14 +437,14 @@
                 <div class="form-group">
                     <label class="checkbox-container">
                         <input type="checkbox" id="config-error-beep" checked>
-                        <span>Play error beep on incorrect or missed answers</span>
+                        <span style="color: var(--text-secondary);">Play error beep on incorrect or missed answers</span>
                     </label>
                 </div>
             </div>
 
-            <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+            <div style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap;">
                 <button id="btn-practice" class="secondary">Start Practice (10 Trials)</button>
-                <button id="btn-start">Start Main Session</button>
+                <button id="btn-start" style="flex: 1;">Start Main Session</button>
             </div>
         </div>
     </div>
@@ -391,10 +467,10 @@
                 </div>
                 <div class="hud-item">
                     <div class="hud-label">Mode</div>
-                    <div class="hud-value" id="hud-mode-display" style="font-size: 1.2rem; margin-top: 0.3rem;">Adaptive</div>
+                    <div class="hud-value" id="hud-mode-display" style="font-size: 1.25rem;">Adaptive</div>
                 </div>
                 <div class="hud-item" style="display: flex; align-items: center;">
-                    <button id="btn-pause" class="secondary" style="padding: 0.5rem 1rem;">Pause</button>
+                    <button id="btn-pause" class="secondary" style="padding: 0.5rem 1.5rem; font-size: 0.9rem;">Pause</button>
                 </div>
             </div>
 
@@ -415,7 +491,7 @@
     <!-- Results Screen -->
     <div id="results-screen" class="container hidden">
         <div class="card">
-            <h2 style="margin-bottom: 1.5rem;">Session Complete</h2>
+            <h2 style="margin-bottom: 2rem; font-size: 2rem; color: var(--primary);">Session Complete</h2>
             
             <div class="stats-grid">
                 <div class="stat-box">
@@ -424,15 +500,15 @@
                 </div>
                 <div class="stat-box">
                     <div class="hud-label">Correct</div>
-                    <div class="hud-value" id="res-correct">0</div>
+                    <div class="hud-value" id="res-correct" style="color: var(--success);">0</div>
                 </div>
                 <div class="stat-box">
                     <div class="hud-label">Incorrect</div>
-                    <div class="hud-value" id="res-incorrect">0</div>
+                    <div class="hud-value" id="res-incorrect" style="color: var(--danger);">0</div>
                 </div>
                 <div class="stat-box">
                     <div class="hud-label">Omissions</div>
-                    <div class="hud-value" id="res-omissions">0</div>
+                    <div class="hud-value" id="res-omissions" style="color: var(--text-secondary);">0</div>
                 </div>
                 <div class="stat-box">
                     <div class="hud-label">Mean RT</div>
@@ -458,10 +534,10 @@
 
             <canvas id="isi-chart" width="800" height="300"></canvas>
 
-            <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
-                <button id="btn-export-csv">Export CSV</button>
-                <button id="btn-export-json">Export JSON</button>
-                <button id="btn-home" class="secondary" style="margin-left: auto;">Return Home</button>
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
+                <button id="btn-export-csv" class="secondary">Export CSV</button>
+                <button id="btn-export-json" class="secondary">Export JSON</button>
+                <button id="btn-home" style="margin-left: auto;">Return to Menu</button>
             </div>
         </div>
     </div>
@@ -753,6 +829,7 @@
 
         function presentStimulus() {
             displayBuffer.innerText = '_';
+            displayBuffer.style.color = 'var(--text)';
             kbBuffer = ''; 
             
             window.speechSynthesis.cancel();
@@ -807,11 +884,12 @@
             state.userAnswer = val;
             
             displayBuffer.innerText = val;
+            displayBuffer.style.color = 'var(--primary)';
             
             if(state.isPractice) {
                 const isCorrect = val === (state.prevDigit + state.currDigit);
                 displayFeedback.innerText = isCorrect ? 'Correct' : 'Incorrect';
-                displayFeedback.style.color = isCorrect ? 'var(--primary)' : 'var(--danger)';
+                displayFeedback.style.color = isCorrect ? 'var(--success)' : 'var(--danger)';
                 
                 if(window.feedbackTimeout) clearTimeout(window.feedbackTimeout);
                 window.feedbackTimeout = setTimeout(() => displayFeedback.innerText = '', 500);
@@ -851,7 +929,6 @@
             let correctness = 'omission';
             if (isSubmitted) correctness = isCorrect ? 'correct' : 'incorrect';
 
-            // Auditory negative feedback loop configuration option trigger
             if (!isCorrect && state.errorBeep) {
                 playErrorBeep();
             }
@@ -967,7 +1044,7 @@
             const minISI = Math.min(...data.map(d => d.isi), limits.minISI);
             const range = maxISI - minISI || 1;
 
-            ctx.strokeStyle = '#333';
+            ctx.strokeStyle = '#334155';
             ctx.lineWidth = 1;
             ctx.beginPath();
             for(let i=0; i<=5; i++) {
@@ -978,8 +1055,9 @@
             ctx.stroke();
 
             ctx.beginPath();
-            ctx.strokeStyle = '#4caf50';
+            ctx.strokeStyle = '#3b82f6';
             ctx.lineWidth = 3;
+            ctx.lineJoin = 'round';
             
             data.forEach((d, i) => {
                 const x = padding + (i / (data.length - 1)) * width;
@@ -991,8 +1069,8 @@
             });
             ctx.stroke();
 
-            ctx.fillStyle = '#aaa';
-            ctx.font = '12px system-ui';
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '12px Inter';
             ctx.fillText(`${maxISI}ms`, 2, padding + 4);
             ctx.fillText(`${minISI}ms`, 2, padding + height + 4);
         }
