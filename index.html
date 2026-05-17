@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cognitive Control Training</title>
+    <title>Cognitive Training: PASAT Flex</title>
     <!-- Changed font to Poppins for a rounder, modern aesthetic -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -148,6 +148,7 @@
             user-select: none;
             margin-top: 0.5rem;
             padding: 0.5rem 0;
+            height: 100%;
         }
 
         .checkbox-container input {
@@ -392,7 +393,7 @@
 <body>
 
     <header>
-        <h2>CCT</h2>
+        <h2>PASAT Flex</h2>
         <div id="top-controls" class="hidden">
             <button class="secondary" id="btn-fullscreen" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Fullscreen</button>
             <button class="danger" id="btn-quit" style="margin-left: 0.5rem; padding: 0.5rem 1rem; font-size: 0.9rem;">Quit</button>
@@ -403,7 +404,7 @@
     <div id="setup-screen" class="container">
         <div class="card">
             <h3>Configuration</h3>
-            <p style="margin-bottom: 2rem; color: var(--text-secondary);">Customize the training session parameters below. Task is Audio-Only.</p>
+            <p style="margin-bottom: 2rem; color: var(--text-secondary);">Customize the PASAT session parameters below. Task is Audio-Only.</p>
             
             <div class="form-row">
                 <div class="form-group">
@@ -416,15 +417,28 @@
                 <div class="form-group">
                     <label for="config-time">Session Duration</label>
                     <select id="config-time">
-                        <!-- Populated via JS -->
+                        <!-- Populated via JS up to 300 mins -->
                     </select>
                 </div>
             </div>
 
+            <!-- ISI Interval Boundaries -->
             <div class="form-row">
                 <div class="form-group">
                     <label for="config-isi">Starting ISI / Fixed ISI</label>
                     <select id="config-isi">
+                        <!-- Populated via JS -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="config-min-isi">Minimum ISI (Adaptive Limit)</label>
+                    <select id="config-min-isi">
+                        <!-- Populated via JS -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="config-max-isi">Maximum ISI (Adaptive Limit)</label>
+                    <select id="config-max-isi">
                         <!-- Populated via JS -->
                     </select>
                 </div>
@@ -442,12 +456,18 @@
                 </div>
             </div>
 
+            <!-- Error Beep Settings -->
             <div class="form-row">
                 <div class="form-group">
                     <label class="checkbox-container">
                         <input type="checkbox" id="config-error-beep" checked>
-                        <span style="color: var(--text-secondary);">Play error beep on incorrect or missed answers</span>
+                        <span style="color: var(--text-secondary);">Play startling error beep on incorrect or missed answers</span>
                     </label>
+                </div>
+                <div class="form-group">
+                    <label for="config-beep-volume">Beep Volume</label>
+                    <input type="range" id="config-beep-volume" min="0" max="1" step="0.05" value="0.75">
+                    <div style="text-align: center; color: var(--text-secondary); margin-top: 0.5rem; font-weight: 600;"><span id="volume-val">75</span>%</div>
                 </div>
             </div>
 
@@ -560,7 +580,11 @@
             isPaused: false,
             isPractice: false,
             mode: 'adaptive',
+            
             errorBeep: true,
+            beepVolume: 0.75,
+            minAllowedISI: 1000,
+            maxAllowedISI: 5000,
             
             sessionDurationMs: 0,
             sessionStartTime: 0,
@@ -615,9 +639,12 @@
         const formMode = document.getElementById('config-mode');
         const formTime = document.getElementById('config-time');
         const formISI = document.getElementById('config-isi');
+        const formMinISI = document.getElementById('config-min-isi');
+        const formMaxISI = document.getElementById('config-max-isi');
         const formVoice = document.getElementById('config-voice');
         const formRate = document.getElementById('config-rate');
         const formErrorBeep = document.getElementById('config-error-beep');
+        const formBeepVolume = document.getElementById('config-beep-volume');
 
         // HUD elements
         const hudElapsed = document.getElementById('hud-elapsed');
@@ -633,15 +660,21 @@
          * Initialization & UI Setup
          */
         function init() {
-            for(let i=1; i<=60; i++) {
+            // Extended session duration up to 300 minutes
+            for(let i=1; i<=300; i++) {
                 formTime.add(new Option(`${i} Minute${i>1?'s':''}`, i));
             }
             formTime.value = 5;
 
+            // Populate all ISI selects from 100 to 5000ms
             for(let i=limits.minISI; i<=limits.maxISI; i+=limits.stepISI) {
                 formISI.add(new Option(`${i} ms`, i));
+                formMinISI.add(new Option(`${i} ms`, i));
+                formMaxISI.add(new Option(`${i} ms`, i));
             }
             formISI.value = 3000;
+            formMinISI.value = 1000;
+            formMaxISI.value = 5000;
 
             if ('speechSynthesis' in window) {
                 synthVoices = window.speechSynthesis.getVoices();
@@ -653,6 +686,8 @@
             }
 
             formRate.addEventListener('input', (e) => document.getElementById('rate-val').innerText = e.target.value);
+            formBeepVolume.addEventListener('input', (e) => document.getElementById('volume-val').innerText = Math.round(e.target.value * 100));
+            
             document.getElementById('btn-practice').addEventListener('click', () => startSession(true));
             document.getElementById('btn-start').addEventListener('click', () => startSession(false));
             document.getElementById('btn-quit').addEventListener('click', endSession);
@@ -713,9 +748,24 @@
         function startSession(practice = false) {
             state.isPractice = practice;
             state.mode = formMode.value;
-            state.currentISI = parseInt(formISI.value);
+            
+            // Sync all user bounds and clamp Starting ISI inside min/max bounds safely
+            state.minAllowedISI = parseInt(formMinISI.value);
+            state.maxAllowedISI = parseInt(formMaxISI.value);
+            
+            // Ensure logical sanity check if user accidentally sets min > max
+            if(state.minAllowedISI > state.maxAllowedISI) {
+                let temp = state.minAllowedISI;
+                state.minAllowedISI = state.maxAllowedISI;
+                state.maxAllowedISI = temp;
+            }
+
+            let startingISI = parseInt(formISI.value);
+            state.currentISI = Math.max(state.minAllowedISI, Math.min(state.maxAllowedISI, startingISI));
+            
             state.sessionDurationMs = parseInt(formTime.value) * 60 * 1000;
             state.errorBeep = formErrorBeep.checked;
+            state.beepVolume = parseFloat(formBeepVolume.value);
             
             state.isRunning = true;
             state.isPaused = false;
@@ -905,25 +955,24 @@
             }
         }
 
-        /* Modded for 1 loud, sudden, startling wave alert */
+        /* 1 loud, sudden, startling wave alert (Volume Modded) */
         function playErrorBeep() {
+            if(state.beepVolume <= 0) return; // Silent if volume is 0
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const oscillator = audioCtx.createOscillator();
                 const gainNode = audioCtx.createGain();
                 
-                // Square wave offers a much harsher, more disruptive timbre than a sawtooth or sine
                 oscillator.type = 'square'; 
-                oscillator.frequency.setValueAtTime(210, audioCtx.currentTime); // Aggressive low-mid frequency
+                oscillator.frequency.setValueAtTime(210, audioCtx.currentTime); 
                 
-                // Instantly hit full, loud output floor
-                gainNode.gain.setValueAtTime(0.35, audioCtx.currentTime);
+                // Set gain using the base max standard (0.35) factored by user volume slider
+                gainNode.gain.setValueAtTime(0.35 * state.beepVolume, audioCtx.currentTime);
                 
                 oscillator.connect(gainNode);
                 gainNode.connect(audioCtx.destination);
                 
                 oscillator.start();
-                // Sudden raw cutoff at 0.20s without soft fade out filters to simulate a jarring trigger
                 oscillator.stop(audioCtx.currentTime + 0.20);
             } catch (e) {
                 console.error("Synthesizer error beep failed:", e);
@@ -978,7 +1027,9 @@
         }
 
         function changeISI(delta, direction) {
-            let newISI = Math.max(limits.minISI, Math.min(limits.maxISI, state.currentISI + delta));
+            // Updated to clamp using the user-defined boundaries instead of global limits
+            let newISI = Math.max(state.minAllowedISI, Math.min(state.maxAllowedISI, state.currentISI + delta));
+            
             if (newISI !== state.currentISI) {
                 state.currentISI = newISI;
                 if(state.currentISI < state.minAchievedISI) state.minAchievedISI = state.currentISI;
@@ -1052,8 +1103,8 @@
             const width = canvas.width - padding * 2;
             const height = canvas.height - padding * 2;
 
-            const maxISI = Math.max(1000, ...data.map(d => d.isi));
-            const minISI = Math.min(...data.map(d => d.isi), limits.minISI);
+            const maxISI = Math.max(state.maxAllowedISI, ...data.map(d => d.isi));
+            const minISI = Math.min(state.minAllowedISI, ...data.map(d => d.isi));
             const range = maxISI - minISI || 1;
 
             ctx.strokeStyle = '#334155';
