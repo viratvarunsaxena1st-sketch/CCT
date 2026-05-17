@@ -3,24 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>aPASAT ergo CCT</title>
-    <!-- Added Inter font for a cleaner, modern look -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Cognitive Control Training</title>
+    <!-- Changed font to Poppins for a rounder, modern aesthetic -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             /* Modern Dark Theme (Slate & Blue) */
             --bg: #0f172a;
             --surface: #1e293b;
             --surface-hover: #334155;
-            --text: #f8fafc;
-            --text-secondary: #94a3b8;
+            
+            /* Updated Text Colors to Light/Ice Blues for contrast */
+            --text: #e0f2fe; 
+            --text-secondary: #bae6fd; 
+            
             --primary: #3b82f6;
             --primary-hover: #2563eb;
             --success: #10b981;
             --danger: #ef4444;
             --danger-hover: #dc2626;
             --border: #334155;
-            --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            
+            /* Updated Font Family */
+            --font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+            
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
             --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
@@ -88,6 +94,7 @@
         .card h3 {
             font-size: 1.5rem;
             margin-bottom: 0.5rem;
+            color: var(--text);
         }
 
         .form-group {
@@ -121,6 +128,7 @@
             border: 1px solid var(--border);
             border-radius: 8px;
             font-size: 1rem;
+            font-family: var(--font-family);
             transition: border-color 0.2s, box-shadow 0.2s;
             appearance: none;
             cursor: pointer;
@@ -155,6 +163,7 @@
             border: none;
             padding: 0.875rem 1.75rem;
             font-size: 1rem;
+            font-family: var(--font-family);
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -273,7 +282,7 @@
             align-items: center;
             gap: 1.5rem;
             width: 100%;
-            max-width: 600px; /* Widened to fit 6 columns nicely */
+            max-width: 600px;
         }
 
         .input-buffer-display {
@@ -293,7 +302,7 @@
 
         .keypad {
             display: grid;
-            grid-template-columns: repeat(6, 1fr); /* 6 Columns as requested */
+            grid-template-columns: repeat(6, 1fr);
             gap: 0.75rem;
             width: 100%;
         }
@@ -394,7 +403,7 @@
     <div id="setup-screen" class="container">
         <div class="card">
             <h3>Configuration</h3>
-            <p style="margin-bottom: 2rem; color: var(--text-secondary);">Customize the PASAT session parameters below. Task is Audio-Only.</p>
+            <p style="margin-bottom: 2rem; color: var(--text-secondary);">Customize the training session parameters below. Task is Audio-Only.</p>
             
             <div class="form-row">
                 <div class="form-group">
@@ -1069,8 +1078,8 @@
             });
             ctx.stroke();
 
-            ctx.fillStyle = '#94a3b8';
-            ctx.font = '12px Inter';
+            ctx.fillStyle = '#bae6fd';
+            ctx.font = '12px Poppins';
             ctx.fillText(`${maxISI}ms`, 2, padding + 4);
             ctx.fillText(`${minISI}ms`, 2, padding + height + 4);
         }
