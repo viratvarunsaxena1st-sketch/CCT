@@ -280,7 +280,7 @@
             reversals: 0, lastDirection: null, consecCorrect: 0, consecIncorrect: 0,
             trialCount: 0, prevDigit: null, currDigit: null, trialStartTime: 0, nextOnset: 0,
             userAnswer: null, submitTime: null, history: [], 
-            timerId: null, uiTimerId: null, visualClearTimerId: null
+            timerId: null, uiTimerId: null, visualClearTimerId: null, beepTimeoutId: null
         };
 
         const limits = { minAudioISI: 200, minVisualISI: 400, maxISI: 5000, stepISI: 100 };
@@ -315,11 +315,9 @@
         const btnPause = document.getElementById('btn-pause');
 
         function init() {
-            // Populate Timer
             for(let i=1; i<=300; i++) formTime.add(new Option(`${i} Minute${i>1?'s':''}`, i));
             formTime.value = 5;
 
-            // Set up Event Listeners for Dynamic UI
             formModality.addEventListener('change', () => {
                 audioSettingsBlock.classList.toggle('hidden', formModality.value === 'visual');
                 updateISIOptions();
@@ -339,7 +337,6 @@
             formMinISI.addEventListener('change', updateISIOptions);
             formMaxISI.addEventListener('change', updateISIOptions);
 
-            // Audio setup
             if ('speechSynthesis' in window) {
                 synthVoices = window.speechSynthesis.getVoices();
                 if(synthVoices.length !== 0) populateVoices();
@@ -361,40 +358,33 @@
             buildKeypad();
             document.addEventListener('keydown', handleKeyboard);
 
-            // Initial UI Setup Call
             updateISIOptions();
             groupBeepVolume.classList.toggle('hidden', !formErrorBeep.checked);
         }
 
-        // Handles Cascading Logic for Dropdowns
         function updateISIOptions() {
             const baseMin = formModality.value === 'visual' ? limits.minVisualISI : limits.minAudioISI;
             const isFixed = formMode.value === 'fixed';
 
-            // Capture current selections before wiping
             let currMin = parseInt(formMinISI.value) || 1000;
             let currMax = parseInt(formMaxISI.value) || 5000;
             let currStart = parseInt(formISI.value) || 3000;
 
-            // Enforce logical constraints
             currMin = Math.max(baseMin, currMin);
             if (currMax < currMin) currMax = currMin;
 
-            // 1. Rebuild Minimum ISI 
             formMinISI.innerHTML = '';
             for(let i = baseMin; i <= limits.maxISI; i += limits.stepISI) {
                 formMinISI.add(new Option(`${i} ms`, i));
             }
             formMinISI.value = currMin;
 
-            // 2. Rebuild Maximum ISI (must be >= Minimum ISI)
             formMaxISI.innerHTML = '';
             for(let i = currMin; i <= limits.maxISI; i += limits.stepISI) {
                 formMaxISI.add(new Option(`${i} ms`, i));
             }
             formMaxISI.value = currMax;
 
-            // 3. Rebuild Starting/Fixed ISI (Clamped by mode)
             let startLimitMin = isFixed ? baseMin : currMin;
             let startLimitMax = isFixed ? limits.maxISI : currMax;
             
@@ -488,7 +478,7 @@
             state.isPaused = !state.isPaused;
             if(state.isPaused) {
                 btnPause.innerText = 'Resume'; state.pauseStartTime = performance.now();
-                clearTimeout(state.timerId); clearTimeout(state.visualClearTimerId);
+                clearTimeout(state.timerId); clearTimeout(state.visualClearTimerId); clearTimeout(state.beepTimeoutId);
                 displayDigit.innerText = 'PAUSED'; window.speechSynthesis.cancel();
             } else {
                 btnPause.innerText = 'Pause';
@@ -499,7 +489,10 @@
         }
 
         function endSession() {
-            state.isRunning = false; clearTimeout(state.timerId); clearInterval(state.uiTimerId); clearTimeout(state.visualClearTimerId); window.speechSynthesis.cancel();
+            state.isRunning = false; 
+            clearTimeout(state.timerId); clearInterval(state.uiTimerId); clearTimeout(state.visualClearTimerId); clearTimeout(state.beepTimeoutId);
+            window.speechSynthesis.cancel();
+            
             if(state.isPractice) { alert("Practice complete! You can now start the main session."); showSetup(); }
             else { generateResults(); switchScreen('results'); }
         }
@@ -523,7 +516,13 @@
             while(nextD === state.currDigit) nextD = Math.floor(Math.random() * 9) + 1;
             state.currDigit = nextD;
 
-            state.userAnswer = null; state.submitTime = null; state.trialStartTime = now;
+            state.userAnswer = null; 
+            state.submitTime = null; 
+            state.trialStartTime = now;
+            
+            state.trialAnswered = false;
+            state.trialCorrect = false; 
+            
             state.nextOnset = now + state.currentISI;
             presentStimulus();
         }
@@ -563,20 +562,75 @@
                     const val = parseInt('1' + key); if (val >= 10 && val <= 18) submitAnswer(val);
                     kbBuffer = ''; clearTimeout(kbTimer);
                 } else if (key === '1') {
-                    kbBuffer = '1'; kbTimer = setTimeout(() => { if(kbBuffer === '1') { submitAnswer(1); kbBuffer = ''; } }, 400);
-                } else if (key >= '2' && key <= '9') { submitAnswer(parseInt(key)); }
+                    kbBuffer = '1'; 
+                    kbTimer = setTimeout(() => { if(kbBuffer === '1') { submitAnswer(1); kbBuffer = ''; } }, 250);
+                } else if (key >= '2' && key <= '9') { 
+                    submitAnswer(parseInt(key)); 
+                }
             }
         }
 
         function submitAnswer(val) {
             if(state.trialCount < 2) return; 
-            state.submitTime = performance.now(); state.userAnswer = val;
-            displayBuffer.innerText = val; displayBuffer.style.color = 'var(--primary)';
+            const now = performance.now();
+            const timeSinceOnset = now - state.trialStartTime;
+            const correctSum = state.prevDigit + state.currDigit;
+            
+            // --- GRACE PERIOD (LATE SUBMISSION FIX) ---
+            if (timeSinceOnset < 400 && state.history.length > 0) {
+                let prevTrial = state.history[state.history.length - 1];
+                
+                if (prevTrial.correctness !== 'correct') {
+                    let isCorrect = (val === prevTrial.correctAnswer);
+                    
+                    if (isCorrect) {
+                        // INTERCEPT AND CANCEL THE BEEP!
+                        if (state.beepTimeoutId) {
+                            clearTimeout(state.beepTimeoutId);
+                            state.beepTimeoutId = null;
+                        }
+
+                        prevTrial.userAnswer = val;
+                        prevTrial.rt = Math.round(state.currentISI + timeSinceOnset);
+                        prevTrial.correctness = 'correct';
+
+                        if (!state.isPractice && state.mode === 'adaptive') {
+                            state.consecIncorrect = Math.max(0, state.consecIncorrect - 1); 
+                            state.consecCorrect++;
+                            if (state.consecCorrect >= 4) { changeISI(-limits.stepISI, 'down'); state.consecCorrect = 0; }
+                        }
+                        
+                        displayBuffer.innerText = val; 
+                        displayBuffer.style.color = 'var(--success)'; 
+                        
+                        if(state.isPractice) {
+                            displayFeedback.innerText = 'Late (Correct)';
+                            displayFeedback.style.color = 'var(--success)';
+                            if(window.feedbackTimeout) clearTimeout(window.feedbackTimeout);
+                            window.feedbackTimeout = setTimeout(() => displayFeedback.innerText = '', 600);
+                        }
+                        return; 
+                    }
+                }
+            }
+
+            // --- NORMAL SUBMISSION (Allows Multiple Attempts) ---
+            state.submitTime = now; 
+            state.userAnswer = val;
+            state.trialAnswered = true;
+            
+            let isCorrectNormal = (val === correctSum);
+            
+            if (isCorrectNormal) {
+                state.trialCorrect = true; 
+            }
+
+            displayBuffer.innerText = val; 
+            displayBuffer.style.color = state.trialCorrect ? 'var(--success)' : 'var(--text)';
             
             if(state.isPractice) {
-                const isCorrect = val === (state.prevDigit + state.currDigit);
-                displayFeedback.innerText = isCorrect ? 'Correct' : 'Incorrect';
-                displayFeedback.style.color = isCorrect ? 'var(--success)' : 'var(--danger)';
+                displayFeedback.innerText = isCorrectNormal ? 'Correct' : 'Incorrect';
+                displayFeedback.style.color = isCorrectNormal ? 'var(--success)' : 'var(--danger)';
                 if(window.feedbackTimeout) clearTimeout(window.feedbackTimeout);
                 window.feedbackTimeout = setTimeout(() => displayFeedback.innerText = '', 500);
             }
@@ -595,13 +649,26 @@
         }
 
         function gradeResponse() {
-            const isSubmitted = state.userAnswer !== null; const correctSum = state.prevDigit + state.currDigit;
-            const rt = isSubmitted ? (state.submitTime - state.trialStartTime) : null;
-            const isCorrect = isSubmitted && (state.userAnswer === correctSum);
-            const isPremature = isSubmitted && (rt < 150);
+            const correctSum = state.prevDigit + state.currDigit;
+            const rt = state.submitTime ? (state.submitTime - state.trialStartTime) : null;
+            const isPremature = rt !== null && (rt < 150);
             
-            let correctness = 'omission'; if (isSubmitted) correctness = isCorrect ? 'correct' : 'incorrect';
-            if (!isCorrect && state.errorBeep) playErrorBeep();
+            let correctness = 'omission'; 
+            if (state.trialAnswered) {
+                correctness = state.trialCorrect ? 'correct' : 'incorrect';
+            }
+            
+            // --- END OF TRIAL GRADING & SCHEDULED BEEP ---
+            if (correctness !== 'correct' && state.errorBeep) {
+                // Schedule the beep with a 400ms delay.
+                // This gives the "Grace Period" logic a chance to cancel the beep 
+                // if the user clicks the right answer a fraction of a second late.
+                state.beepTimeoutId = setTimeout(() => {
+                    if (state.isRunning && !state.isPaused) {
+                        playErrorBeep();
+                    }
+                }, 400); 
+            }
 
             state.history.push({
                 trial: state.trialCount - 1, currDigit: state.currDigit, prevDigit: state.prevDigit,
@@ -610,7 +677,7 @@
             });
 
             if (!state.isPractice && state.mode === 'adaptive') {
-                if (isCorrect) {
+                if (correctness === 'correct') {
                     state.consecCorrect++; state.consecIncorrect = 0;
                     if (state.consecCorrect >= 4) { changeISI(-limits.stepISI, 'down'); state.consecCorrect = 0; }
                 } else {
