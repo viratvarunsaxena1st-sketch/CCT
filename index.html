@@ -4,39 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cognitive Control Training</title>
-    <!-- Changed font to Poppins for a rounder, modern aesthetic -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Modern Dark Theme (Slate & Blue) */
             --bg: #0f172a;
             --surface: #1e293b;
             --surface-hover: #334155;
-            
-            /* Updated Text Colors to Light/Ice Blues for contrast */
             --text: #e0f2fe; 
             --text-secondary: #bae6fd; 
-            
             --primary: #3b82f6;
             --primary-hover: #2563eb;
             --success: #10b981;
             --danger: #ef4444;
             --danger-hover: #dc2626;
             --border: #334155;
-            
-            /* Updated Font Family */
             --font-family: 'Poppins', system-ui, -apple-system, sans-serif;
-            
             --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
             --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             background-color: var(--bg);
@@ -44,10 +32,7 @@
             color: var(--text);
             font-family: var(--font-family);
             line-height: 1.6;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            overflow-x: hidden;
+            display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden;
         }
 
         header {
@@ -55,338 +40,104 @@
             backdrop-filter: blur(12px);
             padding: 1rem 2rem;
             border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 10;
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 10;
         }
         
-        header h2 {
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            color: var(--text);
-        }
+        header h2 { font-weight: 700; letter-spacing: -0.5px; color: var(--text); }
 
-        .container {
-            flex: 1;
-            padding: 2.5rem 2rem;
-            max-width: 900px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .hidden {
-            display: none !important;
-        }
+        .container { flex: 1; padding: 2.5rem 2rem; max-width: 900px; margin: 0 auto; width: 100%; }
+        .hidden { display: none !important; }
 
         /* --- Forms & Setup UI --- */
         .card {
-            background-color: var(--surface);
-            border-radius: 16px;
-            padding: 2.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow-lg);
+            background-color: var(--surface); border-radius: 16px; padding: 2.5rem;
+            margin-bottom: 1.5rem; border: 1px solid var(--border); box-shadow: var(--shadow-lg);
         }
 
-        .card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: var(--text);
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .form-row > .form-group {
-            flex: 1;
-            min-width: 220px;
-        }
+        .card h3 { font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text); }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-secondary); font-size: 0.9rem; }
+        .form-row { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+        .form-row > .form-group { flex: 1; min-width: 220px; }
 
         select, input[type="number"], input[type="range"] {
-            width: 100%;
-            padding: 0.875rem 1rem;
-            background-color: var(--bg);
-            color: var(--text);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 1rem;
-            font-family: var(--font-family);
-            transition: border-color 0.2s, box-shadow 0.2s;
-            appearance: none;
-            cursor: pointer;
+            width: 100%; padding: 0.875rem 1rem; background-color: var(--bg); color: var(--text);
+            border: 1px solid var(--border); border-radius: 8px; font-size: 1rem;
+            font-family: var(--font-family); transition: border-color 0.2s, box-shadow 0.2s;
+            appearance: none; cursor: pointer;
         }
 
-        select:focus, input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
-        }
+        select:focus, input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25); }
 
         .checkbox-container {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            cursor: pointer;
-            user-select: none;
-            margin-top: 0.5rem;
-            padding: 0.5rem 0;
-            height: 100%;
+            display: flex; align-items: center; gap: 0.75rem; cursor: pointer;
+            user-select: none; margin-top: 0.5rem; padding: 0.5rem 0; height: 100%;
         }
-
-        .checkbox-container input {
-            width: 1.25rem;
-            height: 1.25rem;
-            accent-color: var(--primary);
-            cursor: pointer;
-        }
+        .checkbox-container input { width: 1.25rem; height: 1.25rem; accent-color: var(--primary); cursor: pointer; }
 
         button {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.875rem 1.75rem;
-            font-size: 1rem;
-            font-family: var(--font-family);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            font-weight: 600;
-            box-shadow: var(--shadow-md);
+            background-color: var(--primary); color: white; border: none; padding: 0.875rem 1.75rem;
+            font-size: 1rem; font-family: var(--font-family); border-radius: 8px; cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); font-weight: 600; box-shadow: var(--shadow-md);
         }
-
-        button:hover {
-            background-color: var(--primary-hover);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-lg);
-        }
-        
-        button:active {
-            transform: translateY(1px);
-            box-shadow: var(--shadow-sm);
-        }
-
-        button.danger {
-            background-color: var(--danger);
-        }
-
-        button.danger:hover {
-            background-color: var(--danger-hover);
-        }
-
-        button.secondary {
-            background-color: transparent;
-            border: 1px solid var(--border);
-            color: var(--text);
-            box-shadow: none;
-        }
-
-        button.secondary:hover {
-            background-color: var(--surface-hover);
-            border-color: var(--text-secondary);
-        }
+        button:hover { background-color: var(--primary-hover); transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+        button:active { transform: translateY(1px); box-shadow: var(--shadow-sm); }
+        button.danger { background-color: var(--danger); }
+        button.danger:hover { background-color: var(--danger-hover); }
+        button.secondary { background-color: transparent; border: 1px solid var(--border); color: var(--text); box-shadow: none; }
+        button.secondary:hover { background-color: var(--surface-hover); border-color: var(--text-secondary); }
 
         /* --- Task UI --- */
-        #task-ui {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            height: 100%;
-            justify-content: flex-start;
-            padding-top: 2rem;
-        }
+        #task-ui { display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-start; padding-top: 2rem; }
 
         .hud {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            background: var(--surface);
-            padding: 1.25rem 2rem;
-            border-radius: 12px;
-            margin-bottom: 3rem;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow-md);
-            font-variant-numeric: tabular-nums;
+            display: flex; justify-content: space-between; width: 100%; background: var(--surface);
+            padding: 1.25rem 2rem; border-radius: 12px; margin-bottom: 3rem;
+            border: 1px solid var(--border); box-shadow: var(--shadow-md); font-variant-numeric: tabular-nums;
         }
+        .hud-item { text-align: center; display: flex; flex-direction: column; justify-content: center; }
+        .hud-value { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+        .hud-label { font-size: 0.75rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.25rem; }
 
-        .hud-item {
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .hud-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .hud-label {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.25rem;
-        }
-
-        #stimulus-container {
-            height: 160px;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 3rem;
-            position: relative;
-        }
-
+        #stimulus-container { height: 160px; width: 100%; display: flex; align-items: center; justify-content: center; margin-bottom: 3rem; position: relative; }
         #digit-display {
-            font-size: 5rem;
-            font-weight: 700;
-            line-height: 1;
-            color: var(--text-secondary);
-            transition: color 0.15s ease-out;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            font-size: 5rem; font-weight: 700; line-height: 1; color: var(--text-secondary);
+            transition: color 0.05s ease-out; text-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
-
-        #feedback-display {
-            position: absolute;
-            top: -30px;
-            font-size: 1.25rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
+        #feedback-display { position: absolute; top: -30px; font-size: 1.25rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
 
         /* --- Keypad --- */
-        .keypad-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5rem;
-            width: 100%;
-            max-width: 600px;
-        }
-
+        .keypad-container { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; width: 100%; max-width: 600px; }
         .input-buffer-display {
-            width: 100%;
-            height: 60px;
-            background: var(--bg);
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--text);
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+            width: 100%; height: 60px; background: var(--bg); border: 2px solid var(--border);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; font-weight: 700; color: var(--text); box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
         }
-
-        .keypad {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 0.75rem;
-            width: 100%;
-        }
-
+        .keypad { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.75rem; width: 100%; }
         .keypad button {
-            padding: 1.5rem 0;
-            font-size: 1.75rem;
-            font-weight: 600;
-            background-color: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            color: var(--text);
-            touch-action: manipulation;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.15s ease;
+            padding: 1.5rem 0; font-size: 1.75rem; font-weight: 600; background-color: var(--surface);
+            border: 1px solid var(--border); border-radius: 12px; color: var(--text); touch-action: manipulation;
+            box-shadow: var(--shadow-sm); transition: all 0.15s ease;
         }
-
-        .keypad button:hover {
-            background-color: var(--surface-hover);
-            border-color: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-            color: var(--primary);
-        }
-
-        .keypad button:active {
-            background-color: var(--primary);
-            color: white;
-            border-color: var(--primary);
-            transform: translateY(1px);
-            box-shadow: none;
-        }
+        .keypad button:hover { background-color: var(--surface-hover); border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-md); color: var(--primary); }
+        .keypad button:active { background-color: var(--primary); color: white; border-color: var(--primary); transform: translateY(1px); box-shadow: none; }
 
         /* --- Results UI --- */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2.5rem;
-        }
-
-        .stat-box {
-            background: var(--bg);
-            padding: 1.5rem 1rem;
-            border-radius: 12px;
-            text-align: center;
-            border: 1px solid var(--border);
-            transition: transform 0.2s;
-        }
-        
-        .stat-box:hover {
-            transform: translateY(-2px);
-            border-color: var(--surface-hover);
-        }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin-bottom: 2.5rem; }
+        .stat-box { background: var(--bg); padding: 1.5rem 1rem; border-radius: 12px; text-align: center; border: 1px solid var(--border); transition: transform 0.2s; }
+        .stat-box:hover { transform: translateY(-2px); border-color: var(--surface-hover); }
 
         canvas {
-            background: var(--bg);
-            width: 100%;
-            max-width: 100%;
-            height: 300px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            margin-bottom: 2rem;
-            padding: 1rem;
+            background: var(--bg); width: 100%; max-width: 100%; height: 300px;
+            border-radius: 12px; border: 1px solid var(--border); margin-bottom: 2rem; padding: 1rem;
         }
 
         @media (max-width: 768px) {
-            .hud {
-                flex-wrap: wrap;
-                gap: 1.5rem;
-                padding: 1rem;
-            }
-            .hud-item {
-                flex: 1 1 40%;
-            }
-            .keypad {
-                gap: 0.5rem;
-            }
-            .keypad button {
-                font-size: 1.5rem;
-                padding: 1.25rem 0;
-                border-radius: 8px;
-            }
+            .hud { flex-wrap: wrap; gap: 1.5rem; padding: 1rem; }
+            .hud-item { flex: 1 1 40%; }
+            .keypad { gap: 0.5rem; }
+            .keypad button { font-size: 1.5rem; padding: 1.25rem 0; border-radius: 8px; }
         }
     </style>
 </head>
@@ -400,13 +151,19 @@
         </div>
     </header>
 
-    <!-- Setup Screen -->
     <div id="setup-screen" class="container">
         <div class="card">
             <h3>Configuration</h3>
-            <p style="margin-bottom: 2rem; color: var(--text-secondary);">Customize the training session parameters below. Task is Audio-Only.</p>
+            <p style="margin-bottom: 2rem; color: var(--text-secondary);">Customize the training session parameters below. Input can be given through on screen keyboard and typing.</p>
             
             <div class="form-row">
+                <div class="form-group">
+                    <label for="config-modality">Modality</label>
+                    <select id="config-modality">
+                        <option value="audio">Audio-Only (Spoken)</option>
+                        <option value="visual">Visual-Only (On-Screen)</option>
+                    </select>
+                </div>
                 <div class="form-group">
                     <label for="config-mode">Task Mode</label>
                     <select id="config-mode">
@@ -416,31 +173,22 @@
                 </div>
                 <div class="form-group">
                     <label for="config-time">Session Duration</label>
-                    <select id="config-time">
-                        <!-- Populated via JS up to 300 mins -->
-                    </select>
+                    <select id="config-time"></select>
                 </div>
             </div>
 
-            <!-- ISI Interval Boundaries -->
             <div class="form-row">
                 <div class="form-group">
                     <label for="config-isi">Starting ISI / Fixed ISI</label>
-                    <select id="config-isi">
-                        <!-- Populated via JS -->
-                    </select>
+                    <select id="config-isi"></select>
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="group-min-isi">
                     <label for="config-min-isi">Minimum ISI (Adaptive Limit)</label>
-                    <select id="config-min-isi">
-                        <!-- Populated via JS -->
-                    </select>
+                    <select id="config-min-isi"></select>
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="group-max-isi">
                     <label for="config-max-isi">Maximum ISI (Adaptive Limit)</label>
-                    <select id="config-max-isi">
-                        <!-- Populated via JS -->
-                    </select>
+                    <select id="config-max-isi"></select>
                 </div>
             </div>
 
@@ -456,7 +204,6 @@
                 </div>
             </div>
 
-            <!-- Error Beep Settings -->
             <div class="form-row">
                 <div class="form-group">
                     <label class="checkbox-container">
@@ -464,7 +211,7 @@
                         <span style="color: var(--text-secondary);">Play startling error beep on incorrect or missed answers</span>
                     </label>
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="group-beep-volume">
                     <label for="config-beep-volume">Beep Volume</label>
                     <input type="range" id="config-beep-volume" min="0" max="1" step="0.05" value="0.75">
                     <div style="text-align: center; color: var(--text-secondary); margin-top: 0.5rem; font-weight: 600;"><span id="volume-val">75</span>%</div>
@@ -478,29 +225,14 @@
         </div>
     </div>
 
-    <!-- Task Screen -->
     <div id="task-screen" class="container hidden">
         <div id="task-ui">
             <div class="hud">
-                <div class="hud-item">
-                    <div class="hud-label">Time Elapsed</div>
-                    <div class="hud-value" id="hud-elapsed">00:00</div>
-                </div>
-                <div class="hud-item">
-                    <div class="hud-label">Time Remaining</div>
-                    <div class="hud-value" id="hud-remaining">00:00</div>
-                </div>
-                <div class="hud-item">
-                    <div class="hud-label">Current ISI</div>
-                    <div class="hud-value" id="hud-isi">3000ms</div>
-                </div>
-                <div class="hud-item">
-                    <div class="hud-label">Mode</div>
-                    <div class="hud-value" id="hud-mode-display" style="font-size: 1.25rem;">Adaptive</div>
-                </div>
-                <div class="hud-item" style="display: flex; align-items: center;">
-                    <button id="btn-pause" class="secondary" style="padding: 0.5rem 1.5rem; font-size: 0.9rem;">Pause</button>
-                </div>
+                <div class="hud-item"><div class="hud-label">Time Elapsed</div><div class="hud-value" id="hud-elapsed">00:00</div></div>
+                <div class="hud-item"><div class="hud-label">Time Remaining</div><div class="hud-value" id="hud-remaining">00:00</div></div>
+                <div class="hud-item"><div class="hud-label">Current ISI</div><div class="hud-value" id="hud-isi">3000ms</div></div>
+                <div class="hud-item"><div class="hud-label">Mode</div><div class="hud-value" id="hud-mode-display" style="font-size: 1.25rem;">Adaptive</div></div>
+                <div class="hud-item" style="display: flex; align-items: center;"><button id="btn-pause" class="secondary" style="padding: 0.5rem 1.5rem; font-size: 0.9rem;">Pause</button></div>
             </div>
 
             <div id="stimulus-container">
@@ -510,59 +242,26 @@
 
             <div class="keypad-container">
                 <div class="input-buffer-display" id="input-buffer">_</div>
-                <div class="keypad" id="numpad">
-                    <!-- Populated via JS -->
-                </div>
+                <div class="keypad" id="numpad"></div>
             </div>
         </div>
     </div>
 
-    <!-- Results Screen -->
     <div id="results-screen" class="container hidden">
         <div class="card">
             <h2 style="margin-bottom: 2rem; font-size: 2rem; color: var(--primary);">Session Complete</h2>
-            
             <div class="stats-grid">
-                <div class="stat-box">
-                    <div class="hud-label">Accuracy</div>
-                    <div class="hud-value" id="res-accuracy">0%</div>
-                </div>
-                <div class="stat-box">
-                    <div class="hud-label">Correct</div>
-                    <div class="hud-value" id="res-correct" style="color: var(--success);">0</div>
-                </div>
-                <div class="stat-box">
-                    <div class="hud-label">Incorrect</div>
-                    <div class="hud-value" id="res-incorrect" style="color: var(--danger);">0</div>
-                </div>
-                <div class="stat-box">
-                    <div class="hud-label">Omissions</div>
-                    <div class="hud-value" id="res-omissions" style="color: var(--text-secondary);">0</div>
-                </div>
-                <div class="stat-box">
-                    <div class="hud-label">Mean RT</div>
-                    <div class="hud-value" id="res-mean-rt">0ms</div>
-                </div>
-                <div class="stat-box">
-                    <div class="hud-label">Median RT</div>
-                    <div class="hud-value" id="res-median-rt">0ms</div>
-                </div>
-                <div class="stat-box">
-                    <div class="hud-label">Final ISI</div>
-                    <div class="hud-value" id="res-final-isi">0ms</div>
-                </div>
-                <div class="stat-box">
-                    <div class="hud-label">Min ISI</div>
-                    <div class="hud-value" id="res-min-isi">0ms</div>
-                </div>
-                <div class="stat-box">
-                    <div class="hud-label">Reversals</div>
-                    <div class="hud-value" id="res-reversals">0</div>
-                </div>
+                <div class="stat-box"><div class="hud-label">Accuracy</div><div class="hud-value" id="res-accuracy">0%</div></div>
+                <div class="stat-box"><div class="hud-label">Correct</div><div class="hud-value" id="res-correct" style="color: var(--success);">0</div></div>
+                <div class="stat-box"><div class="hud-label">Incorrect</div><div class="hud-value" id="res-incorrect" style="color: var(--danger);">0</div></div>
+                <div class="stat-box"><div class="hud-label">Omissions</div><div class="hud-value" id="res-omissions" style="color: var(--text-secondary);">0</div></div>
+                <div class="stat-box"><div class="hud-label">Mean RT</div><div class="hud-value" id="res-mean-rt">0ms</div></div>
+                <div class="stat-box"><div class="hud-label">Median RT</div><div class="hud-value" id="res-median-rt">0ms</div></div>
+                <div class="stat-box"><div class="hud-label">Final ISI</div><div class="hud-value" id="res-final-isi">0ms</div></div>
+                <div class="stat-box"><div class="hud-label">Min ISI</div><div class="hud-value" id="res-min-isi">0ms</div></div>
+                <div class="stat-box"><div class="hud-label">Reversals</div><div class="hud-value" id="res-reversals">0</div></div>
             </div>
-
             <canvas id="isi-chart" width="800" height="300"></canvas>
-
             <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
                 <button id="btn-export-csv" class="secondary">Export CSV</button>
                 <button id="btn-export-json" class="secondary">Export JSON</button>
@@ -572,70 +271,25 @@
     </div>
 
     <script>
-        /**
-         * State & Configuration
-         */
         const state = {
-            isRunning: false,
-            isPaused: false,
-            isPractice: false,
-            mode: 'adaptive',
-            
-            errorBeep: true,
-            beepVolume: 0.75,
-            minAllowedISI: 1000,
-            maxAllowedISI: 5000,
-            
-            sessionDurationMs: 0,
-            sessionStartTime: 0,
-            pauseStartTime: 0,
-            totalPausedTime: 0,
-
-            currentISI: 3000,
-            minAchievedISI: 3000,
-            reversals: 0,
-            lastDirection: null,
-            consecCorrect: 0,
-            consecIncorrect: 0,
-
-            trialCount: 0,
-            prevDigit: null,
-            currDigit: null,
-            
-            trialStartTime: 0,
-            nextOnset: 0,
-            
-            userAnswer: null,
-            submitTime: null,
-            
-            history: [], 
-            
-            timerId: null,
-            uiTimerId: null,
-            visualClearTimerId: null
+            isRunning: false, isPaused: false, isPractice: false,
+            modality: 'audio', mode: 'adaptive',
+            errorBeep: true, beepVolume: 0.75,
+            minAllowedISI: 1000, maxAllowedISI: 5000, currentISI: 3000, minAchievedISI: 3000,
+            sessionDurationMs: 0, sessionStartTime: 0, pauseStartTime: 0, totalPausedTime: 0,
+            reversals: 0, lastDirection: null, consecCorrect: 0, consecIncorrect: 0,
+            trialCount: 0, prevDigit: null, currDigit: null, trialStartTime: 0, nextOnset: 0,
+            userAnswer: null, submitTime: null, history: [], 
+            timerId: null, uiTimerId: null, visualClearTimerId: null
         };
 
-        const limits = {
-            minISI: 100,
-            maxISI: 5000,
-            stepISI: 100
-        };
+        const limits = { minAudioISI: 200, minVisualISI: 400, maxISI: 5000, stepISI: 100 };
+        let synthVoices = []; let kbBuffer = ''; let kbTimer = null;
 
-        let synthVoices = [];
-        let kbBuffer = '';
-        let kbTimer = null;
-
-        /**
-         * DOM Elements
-         */
-        const screens = {
-            setup: document.getElementById('setup-screen'),
-            task: document.getElementById('task-screen'),
-            results: document.getElementById('results-screen')
-        };
+        const screens = { setup: document.getElementById('setup-screen'), task: document.getElementById('task-screen'), results: document.getElementById('results-screen') };
         const controls = document.getElementById('top-controls');
-
-        // Form elements
+        
+        const formModality = document.getElementById('config-modality');
         const formMode = document.getElementById('config-mode');
         const formTime = document.getElementById('config-time');
         const formISI = document.getElementById('config-isi');
@@ -645,8 +299,12 @@
         const formRate = document.getElementById('config-rate');
         const formErrorBeep = document.getElementById('config-error-beep');
         const formBeepVolume = document.getElementById('config-beep-volume');
+        
+        const audioSettingsBlock = document.getElementById('audio-settings');
+        const groupMinISI = document.getElementById('group-min-isi');
+        const groupMaxISI = document.getElementById('group-max-isi');
+        const groupBeepVolume = document.getElementById('group-beep-volume');
 
-        // HUD elements
         const hudElapsed = document.getElementById('hud-elapsed');
         const hudRemaining = document.getElementById('hud-remaining');
         const hudISI = document.getElementById('hud-isi');
@@ -656,33 +314,36 @@
         const displayBuffer = document.getElementById('input-buffer');
         const btnPause = document.getElementById('btn-pause');
 
-        /**
-         * Initialization & UI Setup
-         */
         function init() {
-            // Extended session duration up to 300 minutes
-            for(let i=1; i<=300; i++) {
-                formTime.add(new Option(`${i} Minute${i>1?'s':''}`, i));
-            }
+            // Populate Timer
+            for(let i=1; i<=300; i++) formTime.add(new Option(`${i} Minute${i>1?'s':''}`, i));
             formTime.value = 5;
 
-            // Populate all ISI selects from 100 to 5000ms
-            for(let i=limits.minISI; i<=limits.maxISI; i+=limits.stepISI) {
-                formISI.add(new Option(`${i} ms`, i));
-                formMinISI.add(new Option(`${i} ms`, i));
-                formMaxISI.add(new Option(`${i} ms`, i));
-            }
-            formISI.value = 3000;
-            formMinISI.value = 1000;
-            formMaxISI.value = 5000;
+            // Set up Event Listeners for Dynamic UI
+            formModality.addEventListener('change', () => {
+                audioSettingsBlock.classList.toggle('hidden', formModality.value === 'visual');
+                updateISIOptions();
+            });
 
+            formMode.addEventListener('change', () => {
+                const isFixed = formMode.value === 'fixed';
+                groupMinISI.classList.toggle('hidden', isFixed);
+                groupMaxISI.classList.toggle('hidden', isFixed);
+                updateISIOptions();
+            });
+
+            formErrorBeep.addEventListener('change', () => {
+                groupBeepVolume.classList.toggle('hidden', !formErrorBeep.checked);
+            });
+
+            formMinISI.addEventListener('change', updateISIOptions);
+            formMaxISI.addEventListener('change', updateISIOptions);
+
+            // Audio setup
             if ('speechSynthesis' in window) {
                 synthVoices = window.speechSynthesis.getVoices();
                 if(synthVoices.length !== 0) populateVoices();
-                window.speechSynthesis.onvoiceschanged = () => {
-                    synthVoices = window.speechSynthesis.getVoices();
-                    populateVoices();
-                };
+                window.speechSynthesis.onvoiceschanged = () => { synthVoices = window.speechSynthesis.getVoices(); populateVoices(); };
             }
 
             formRate.addEventListener('input', (e) => document.getElementById('rate-val').innerText = e.target.value);
@@ -699,6 +360,51 @@
 
             buildKeypad();
             document.addEventListener('keydown', handleKeyboard);
+
+            // Initial UI Setup Call
+            updateISIOptions();
+            groupBeepVolume.classList.toggle('hidden', !formErrorBeep.checked);
+        }
+
+        // Handles Cascading Logic for Dropdowns
+        function updateISIOptions() {
+            const baseMin = formModality.value === 'visual' ? limits.minVisualISI : limits.minAudioISI;
+            const isFixed = formMode.value === 'fixed';
+
+            // Capture current selections before wiping
+            let currMin = parseInt(formMinISI.value) || 1000;
+            let currMax = parseInt(formMaxISI.value) || 5000;
+            let currStart = parseInt(formISI.value) || 3000;
+
+            // Enforce logical constraints
+            currMin = Math.max(baseMin, currMin);
+            if (currMax < currMin) currMax = currMin;
+
+            // 1. Rebuild Minimum ISI 
+            formMinISI.innerHTML = '';
+            for(let i = baseMin; i <= limits.maxISI; i += limits.stepISI) {
+                formMinISI.add(new Option(`${i} ms`, i));
+            }
+            formMinISI.value = currMin;
+
+            // 2. Rebuild Maximum ISI (must be >= Minimum ISI)
+            formMaxISI.innerHTML = '';
+            for(let i = currMin; i <= limits.maxISI; i += limits.stepISI) {
+                formMaxISI.add(new Option(`${i} ms`, i));
+            }
+            formMaxISI.value = currMax;
+
+            // 3. Rebuild Starting/Fixed ISI (Clamped by mode)
+            let startLimitMin = isFixed ? baseMin : currMin;
+            let startLimitMax = isFixed ? limits.maxISI : currMax;
+            
+            currStart = Math.max(startLimitMin, Math.min(startLimitMax, currStart));
+
+            formISI.innerHTML = '';
+            for(let i = startLimitMin; i <= startLimitMax; i += limits.stepISI) {
+                formISI.add(new Option(`${i} ms`, i));
+            }
+            formISI.value = currStart;
         }
 
         function populateVoices() {
@@ -712,54 +418,37 @@
 
         function buildKeypad() {
             const pad = document.getElementById('numpad');
-            for(let i = 2; i <= 18; i++) {
-                let btn = document.createElement('button');
-                btn.innerText = i;
-                btn.id = `btn-${i}`;
-                btn.addEventListener('click', () => submitAnswer(i));
-                pad.appendChild(btn);
+            for(let i=2; i<=18; i++) {
+                let btn = document.createElement('button'); btn.innerText = i; btn.id = `btn-${i}`;
+                btn.addEventListener('click', () => submitAnswer(i)); pad.appendChild(btn);
             }
         }
 
-        /**
-         * Navigation
-         */
         function switchScreen(screenId) {
             Object.values(screens).forEach(s => s.classList.add('hidden'));
             screens[screenId].classList.remove('hidden');
             controls.classList.toggle('hidden', screenId === 'setup');
         }
 
-        function showSetup() {
-            switchScreen('setup');
-        }
+        function showSetup() { switchScreen('setup'); }
+        function toggleFullscreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(e => console.log(e)); else if(document.exitFullscreen) document.exitFullscreen(); }
 
-        function toggleFullscreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => console.log(err));
-            } else {
-                if(document.exitFullscreen) document.exitFullscreen();
-            }
-        }
-
-        /**
-         * Session Control
-         */
         function startSession(practice = false) {
             state.isPractice = practice;
+            state.modality = formModality.value;
             state.mode = formMode.value;
             
-            // Sync all user bounds and clamp Starting ISI inside min/max bounds safely
-            state.minAllowedISI = parseInt(formMinISI.value);
-            state.maxAllowedISI = parseInt(formMaxISI.value);
+            const baseMin = state.modality === 'visual' ? limits.minVisualISI : limits.minAudioISI;
+            const isFixed = state.mode === 'fixed';
             
-            // Ensure logical sanity check if user accidentally sets min > max
-            if(state.minAllowedISI > state.maxAllowedISI) {
-                let temp = state.minAllowedISI;
-                state.minAllowedISI = state.maxAllowedISI;
-                state.maxAllowedISI = temp;
+            if (isFixed) {
+                state.minAllowedISI = baseMin;
+                state.maxAllowedISI = limits.maxISI;
+            } else {
+                state.minAllowedISI = Math.max(baseMin, parseInt(formMinISI.value));
+                state.maxAllowedISI = parseInt(formMaxISI.value);
             }
-
+            
             let startingISI = parseInt(formISI.value);
             state.currentISI = Math.max(state.minAllowedISI, Math.min(state.maxAllowedISI, startingISI));
             
@@ -767,20 +456,11 @@
             state.errorBeep = formErrorBeep.checked;
             state.beepVolume = parseFloat(formBeepVolume.value);
             
-            state.isRunning = true;
-            state.isPaused = false;
-            state.totalPausedTime = 0;
-            state.minAchievedISI = state.currentISI;
-            state.reversals = 0;
-            state.lastDirection = null;
-            state.consecCorrect = 0;
-            state.consecIncorrect = 0;
-            state.trialCount = 0;
-            state.prevDigit = null;
-            state.currDigit = null;
-            state.history = [];
-            state.userAnswer = null;
-            state.submitTime = null;
+            state.isRunning = true; state.isPaused = false; state.totalPausedTime = 0;
+            state.minAchievedISI = state.currentISI; state.reversals = 0; state.lastDirection = null;
+            state.consecCorrect = 0; state.consecIncorrect = 0; state.trialCount = 0;
+            state.prevDigit = null; state.currDigit = null; state.history = [];
+            state.userAnswer = null; state.submitTime = null;
             
             hudMode.innerText = practice ? 'Practice' : (state.mode === 'adaptive' ? 'Adaptive' : 'Fixed');
             btnPause.innerText = 'Pause';
@@ -790,8 +470,9 @@
             
             switchScreen('task');
 
-            let u = new SpeechSynthesisUtterance('');
-            window.speechSynthesis.speak(u);
+            if(state.modality === 'audio') {
+                let u = new SpeechSynthesisUtterance(''); window.speechSynthesis.speak(u);
+            }
 
             setTimeout(() => {
                 if(!state.isRunning) return;
@@ -806,366 +487,210 @@
             if(!state.isRunning) return;
             state.isPaused = !state.isPaused;
             if(state.isPaused) {
-                btnPause.innerText = 'Resume';
-                state.pauseStartTime = performance.now();
-                clearTimeout(state.timerId);
-                clearTimeout(state.visualClearTimerId);
-                displayDigit.innerText = 'PAUSED';
-                window.speechSynthesis.cancel();
+                btnPause.innerText = 'Resume'; state.pauseStartTime = performance.now();
+                clearTimeout(state.timerId); clearTimeout(state.visualClearTimerId);
+                displayDigit.innerText = 'PAUSED'; window.speechSynthesis.cancel();
             } else {
                 btnPause.innerText = 'Pause';
                 let pauseDuration = performance.now() - state.pauseStartTime;
-                state.totalPausedTime += pauseDuration;
-                state.nextOnset += pauseDuration;
-                displayDigit.innerText = '•';
-                taskLoop();
+                state.totalPausedTime += pauseDuration; state.nextOnset += pauseDuration;
+                displayDigit.innerText = '•'; taskLoop();
             }
         }
 
         function endSession() {
-            state.isRunning = false;
-            clearTimeout(state.timerId);
-            clearInterval(state.uiTimerId);
-            clearTimeout(state.visualClearTimerId);
-            window.speechSynthesis.cancel();
-            
-            if(state.isPractice) {
-                alert("Practice complete! You can now start the main session.");
-                showSetup();
-            } else {
-                generateResults();
-                switchScreen('results');
-            }
+            state.isRunning = false; clearTimeout(state.timerId); clearInterval(state.uiTimerId); clearTimeout(state.visualClearTimerId); window.speechSynthesis.cancel();
+            if(state.isPractice) { alert("Practice complete! You can now start the main session."); showSetup(); }
+            else { generateResults(); switchScreen('results'); }
         }
 
-        /**
-         * Core Task Loop
-         */
         function taskLoop() {
             if(!state.isRunning || state.isPaused) return;
-
             const now = performance.now();
             const elapsedTotal = now - state.sessionStartTime - state.totalPausedTime;
             
-            if(!state.isPractice && elapsedTotal >= state.sessionDurationMs) {
-                endSession();
-                return;
-            }
-
-            if(now >= state.nextOnset) {
-                executeTrial(now);
-            }
-
+            if(!state.isPractice && elapsedTotal >= state.sessionDurationMs) { endSession(); return; }
+            if(now >= state.nextOnset) { executeTrial(now); }
             state.timerId = setTimeout(taskLoop, 5);
         }
 
         function executeTrial(now) {
-            if(state.trialCount > 1) {
-                gradeResponse();
-            }
+            if(state.trialCount > 1) gradeResponse();
+            if(state.isPractice && state.trialCount >= 11) { endSession(); return; }
 
-            if(state.isPractice && state.trialCount >= 11) {
-                endSession();
-                return;
-            }
-
-            state.trialCount++;
-            state.prevDigit = state.currDigit;
-            
+            state.trialCount++; state.prevDigit = state.currDigit;
             let nextD = Math.floor(Math.random() * 9) + 1;
-            while(nextD === state.currDigit) {
-                nextD = Math.floor(Math.random() * 9) + 1;
-            }
+            while(nextD === state.currDigit) nextD = Math.floor(Math.random() * 9) + 1;
             state.currDigit = nextD;
 
-            state.userAnswer = null;
-            state.submitTime = null;
-            state.trialStartTime = now;
-            
+            state.userAnswer = null; state.submitTime = null; state.trialStartTime = now;
             state.nextOnset = now + state.currentISI;
             presentStimulus();
         }
 
         function presentStimulus() {
-            displayBuffer.innerText = '_';
-            displayBuffer.style.color = 'var(--text)';
-            kbBuffer = ''; 
+            displayBuffer.innerText = '_'; displayBuffer.style.color = 'var(--text)'; kbBuffer = ''; 
             
-            window.speechSynthesis.cancel();
-            let u = new SpeechSynthesisUtterance(state.currDigit.toString());
-            const voiceIdx = formVoice.value;
-            if(synthVoices[voiceIdx]) u.voice = synthVoices[voiceIdx];
-            u.rate = parseFloat(formRate.value);
-            window.speechSynthesis.speak(u);
+            if(state.modality === 'audio') {
+                window.speechSynthesis.cancel();
+                let u = new SpeechSynthesisUtterance(state.currDigit.toString());
+                if(synthVoices[formVoice.value]) u.voice = synthVoices[formVoice.value];
+                u.rate = parseFloat(formRate.value);
+                window.speechSynthesis.speak(u);
 
-            displayDigit.innerText = '•';
-            displayDigit.style.color = 'var(--primary)';
-
-            state.visualClearTimerId = setTimeout(() => {
-                if(!state.isRunning || state.isPaused) return;
-                displayDigit.style.color = 'var(--text-secondary)'; 
-            }, 150);
+                displayDigit.innerText = '•'; displayDigit.style.color = 'var(--primary)';
+                state.visualClearTimerId = setTimeout(() => {
+                    if(!state.isRunning || state.isPaused) return;
+                    displayDigit.style.color = 'var(--text-secondary)'; 
+                }, 150);
+            } else {
+                displayDigit.innerText = state.currDigit;
+                displayDigit.style.color = 'var(--text)';
+                
+                const displayDuration = Math.min(250, state.currentISI - 150);
+                state.visualClearTimerId = setTimeout(() => {
+                    if(!state.isRunning || state.isPaused) return;
+                    displayDigit.innerText = ''; 
+                }, Math.max(100, displayDuration));
+            }
         }
 
-        /**
-         * Response Logic
-         */
         function handleKeyboard(e) {
             if(!state.isRunning || state.isPaused) return;
             const key = e.key;
-            
             if(key >= '0' && key <= '9') {
                 if (kbBuffer === '1') {
-                    const val = parseInt('1' + key);
-                    if (val >= 10 && val <= 18) {
-                        submitAnswer(val);
-                    }
-                    kbBuffer = '';
-                    clearTimeout(kbTimer);
+                    const val = parseInt('1' + key); if (val >= 10 && val <= 18) submitAnswer(val);
+                    kbBuffer = ''; clearTimeout(kbTimer);
                 } else if (key === '1') {
-                    kbBuffer = '1';
-                    kbTimer = setTimeout(() => { 
-                        if(kbBuffer === '1') {
-                            submitAnswer(1); 
-                            kbBuffer = '';
-                        }
-                    }, 400);
-                } else if (key >= '2' && key <= '9') {
-                    submitAnswer(parseInt(key));
-                }
+                    kbBuffer = '1'; kbTimer = setTimeout(() => { if(kbBuffer === '1') { submitAnswer(1); kbBuffer = ''; } }, 400);
+                } else if (key >= '2' && key <= '9') { submitAnswer(parseInt(key)); }
             }
         }
 
         function submitAnswer(val) {
             if(state.trialCount < 2) return; 
-
-            state.submitTime = performance.now();
-            state.userAnswer = val;
-            
-            displayBuffer.innerText = val;
-            displayBuffer.style.color = 'var(--primary)';
+            state.submitTime = performance.now(); state.userAnswer = val;
+            displayBuffer.innerText = val; displayBuffer.style.color = 'var(--primary)';
             
             if(state.isPractice) {
                 const isCorrect = val === (state.prevDigit + state.currDigit);
                 displayFeedback.innerText = isCorrect ? 'Correct' : 'Incorrect';
                 displayFeedback.style.color = isCorrect ? 'var(--success)' : 'var(--danger)';
-                
                 if(window.feedbackTimeout) clearTimeout(window.feedbackTimeout);
                 window.feedbackTimeout = setTimeout(() => displayFeedback.innerText = '', 500);
             }
         }
 
-        /* 1 loud, sudden, startling wave alert (Volume Modded) */
         function playErrorBeep() {
-            if(state.beepVolume <= 0) return; // Silent if volume is 0
+            if(!state.errorBeep || state.beepVolume <= 0) return;
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioCtx.createOscillator();
-                const gainNode = audioCtx.createGain();
-                
-                oscillator.type = 'square'; 
-                oscillator.frequency.setValueAtTime(210, audioCtx.currentTime); 
-                
-                // Set gain using the base max standard (0.35) factored by user volume slider
+                const oscillator = audioCtx.createOscillator(); const gainNode = audioCtx.createGain();
+                oscillator.type = 'square'; oscillator.frequency.setValueAtTime(210, audioCtx.currentTime); 
                 gainNode.gain.setValueAtTime(0.35 * state.beepVolume, audioCtx.currentTime);
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioCtx.destination);
-                
-                oscillator.start();
-                oscillator.stop(audioCtx.currentTime + 0.20);
-            } catch (e) {
-                console.error("Synthesizer error beep failed:", e);
-            }
+                oscillator.connect(gainNode); gainNode.connect(audioCtx.destination);
+                oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.20);
+            } catch (e) { console.error("Synthesizer error beep failed:", e); }
         }
 
         function gradeResponse() {
-            const isSubmitted = state.userAnswer !== null;
-            const correctSum = state.prevDigit + state.currDigit;
+            const isSubmitted = state.userAnswer !== null; const correctSum = state.prevDigit + state.currDigit;
             const rt = isSubmitted ? (state.submitTime - state.trialStartTime) : null;
-            
             const isCorrect = isSubmitted && (state.userAnswer === correctSum);
             const isPremature = isSubmitted && (rt < 150);
             
-            let correctness = 'omission';
-            if (isSubmitted) correctness = isCorrect ? 'correct' : 'incorrect';
-
-            if (!isCorrect && state.errorBeep) {
-                playErrorBeep();
-            }
+            let correctness = 'omission'; if (isSubmitted) correctness = isCorrect ? 'correct' : 'incorrect';
+            if (!isCorrect && state.errorBeep) playErrorBeep();
 
             state.history.push({
-                trial: state.trialCount - 1,
-                currDigit: state.currDigit,
-                prevDigit: state.prevDigit,
-                userAnswer: state.userAnswer,
-                correctAnswer: correctSum,
-                correctness: correctness,
-                rt: rt ? Math.round(rt) : null,
-                isPremature: isPremature,
-                isi: state.currentISI,
-                mode: state.mode
+                trial: state.trialCount - 1, currDigit: state.currDigit, prevDigit: state.prevDigit,
+                userAnswer: state.userAnswer, correctAnswer: correctSum, correctness: correctness,
+                rt: rt ? Math.round(rt) : null, isPremature: isPremature, isi: state.currentISI, mode: state.mode
             });
 
             if (!state.isPractice && state.mode === 'adaptive') {
                 if (isCorrect) {
-                    state.consecCorrect++;
-                    state.consecIncorrect = 0;
-                    if (state.consecCorrect >= 4) {
-                        changeISI(-limits.stepISI, 'down');
-                        state.consecCorrect = 0;
-                    }
+                    state.consecCorrect++; state.consecIncorrect = 0;
+                    if (state.consecCorrect >= 4) { changeISI(-limits.stepISI, 'down'); state.consecCorrect = 0; }
                 } else {
-                    state.consecIncorrect++;
-                    state.consecCorrect = 0;
-                    if (state.consecIncorrect >= 4) {
-                        changeISI(limits.stepISI, 'up');
-                        state.consecIncorrect = 0;
-                    }
+                    state.consecIncorrect++; state.consecCorrect = 0;
+                    if (state.consecIncorrect >= 4) { changeISI(limits.stepISI, 'up'); state.consecIncorrect = 0; }
                 }
             }
         }
 
         function changeISI(delta, direction) {
-            // Updated to clamp using the user-defined boundaries instead of global limits
             let newISI = Math.max(state.minAllowedISI, Math.min(state.maxAllowedISI, state.currentISI + delta));
-            
             if (newISI !== state.currentISI) {
                 state.currentISI = newISI;
                 if(state.currentISI < state.minAchievedISI) state.minAchievedISI = state.currentISI;
-                
-                if (state.lastDirection && state.lastDirection !== direction) {
-                    state.reversals++;
-                }
+                if (state.lastDirection && state.lastDirection !== direction) state.reversals++;
                 state.lastDirection = direction;
             }
         }
 
-        /**
-         * HUD & Timers
-         */
         function updateHUD() {
             if(!state.isRunning || state.isPaused) return;
-            const now = performance.now();
-            const elapsed = now - state.sessionStartTime - state.totalPausedTime;
+            const now = performance.now(); const elapsed = now - state.sessionStartTime - state.totalPausedTime;
             const remaining = Math.max(0, state.sessionDurationMs - elapsed);
-
-            hudElapsed.innerText = formatTime(elapsed);
-            hudRemaining.innerText = state.isPractice ? '--:--' : formatTime(remaining);
-            hudISI.innerText = state.currentISI + ' ms';
+            hudElapsed.innerText = formatTime(elapsed); hudRemaining.innerText = state.isPractice ? '--:--' : formatTime(remaining); hudISI.innerText = state.currentISI + ' ms';
         }
 
         function formatTime(ms) {
-            const totalSec = Math.floor(ms / 1000);
-            const m = Math.floor(totalSec / 60).toString().padStart(2, '0');
-            const s = (totalSec % 60).toString().padStart(2, '0');
-            return `${m}:${s}`;
+            const totalSec = Math.floor(ms / 1000); const m = Math.floor(totalSec / 60).toString().padStart(2, '0');
+            const s = (totalSec % 60).toString().padStart(2, '0'); return `${m}:${s}`;
         }
 
-        /**
-         * Analytics & Results
-         */
         function generateResults() {
-            const data = state.history;
-            if(data.length === 0) return;
-
+            const data = state.history; if(data.length === 0) return;
             const correctCount = data.filter(d => d.correctness === 'correct').length;
             const incorrectCount = data.filter(d => d.correctness === 'incorrect').length;
             const omissionCount = data.filter(d => d.correctness === 'omission').length;
-            
             const rts = data.filter(d => d.rt !== null).map(d => d.rt).sort((a,b)=>a-b);
             const meanRt = rts.length ? Math.round(rts.reduce((a,b)=>a+b, 0) / rts.length) : 0;
             const medianRt = rts.length ? rts[Math.floor(rts.length/2)] : 0;
             const accuracy = Math.round((correctCount / data.length) * 100) || 0;
 
-            document.getElementById('res-accuracy').innerText = `${accuracy}%`;
-            document.getElementById('res-correct').innerText = correctCount;
-            document.getElementById('res-incorrect').innerText = incorrectCount;
-            document.getElementById('res-omissions').innerText = omissionCount;
-            document.getElementById('res-mean-rt').innerText = `${meanRt}ms`;
-            document.getElementById('res-median-rt').innerText = `${medianRt}ms`;
-            document.getElementById('res-final-isi').innerText = `${state.currentISI}ms`;
-            document.getElementById('res-min-isi').innerText = `${state.minAchievedISI}ms`;
+            document.getElementById('res-accuracy').innerText = `${accuracy}%`; document.getElementById('res-correct').innerText = correctCount;
+            document.getElementById('res-incorrect').innerText = incorrectCount; document.getElementById('res-omissions').innerText = omissionCount;
+            document.getElementById('res-mean-rt').innerText = `${meanRt}ms`; document.getElementById('res-median-rt').innerText = `${medianRt}ms`;
+            document.getElementById('res-final-isi').innerText = `${state.currentISI}ms`; document.getElementById('res-min-isi').innerText = `${state.minAchievedISI}ms`;
             document.getElementById('res-reversals').innerText = state.reversals;
-
             drawGraph();
         }
 
         function drawGraph() {
-            const canvas = document.getElementById('isi-chart');
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const canvas = document.getElementById('isi-chart'); const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const data = state.history; if(data.length < 2) return;
+            const padding = 30; const width = canvas.width - padding * 2; const height = canvas.height - padding * 2;
+            const maxISI = Math.max(state.maxAllowedISI, ...data.map(d => d.isi)); const minISI = Math.min(state.minAllowedISI, ...data.map(d => d.isi)); const range = maxISI - minISI || 1;
 
-            const data = state.history;
-            if(data.length < 2) return;
-
-            const padding = 30;
-            const width = canvas.width - padding * 2;
-            const height = canvas.height - padding * 2;
-
-            const maxISI = Math.max(state.maxAllowedISI, ...data.map(d => d.isi));
-            const minISI = Math.min(state.minAllowedISI, ...data.map(d => d.isi));
-            const range = maxISI - minISI || 1;
-
-            ctx.strokeStyle = '#334155';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            for(let i=0; i<=5; i++) {
-                let y = padding + (height * (i/5));
-                ctx.moveTo(padding, y);
-                ctx.lineTo(padding + width, y);
-            }
-            ctx.stroke();
-
-            ctx.beginPath();
-            ctx.strokeStyle = '#3b82f6';
-            ctx.lineWidth = 3;
-            ctx.lineJoin = 'round';
-            
+            ctx.strokeStyle = '#334155'; ctx.lineWidth = 1; ctx.beginPath();
+            for(let i=0; i<=5; i++) { let y = padding + (height * (i/5)); ctx.moveTo(padding, y); ctx.lineTo(padding + width, y); } ctx.stroke();
+            ctx.beginPath(); ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 3; ctx.lineJoin = 'round';
             data.forEach((d, i) => {
-                const x = padding + (i / (data.length - 1)) * width;
-                const normalizedY = (d.isi - minISI) / range;
-                const y = padding + height - (normalizedY * height); 
-                
-                if (i === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
+                const x = padding + (i / (data.length - 1)) * width; const normalizedY = (d.isi - minISI) / range; const y = padding + height - (normalizedY * height); 
+                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
             });
-            ctx.stroke();
-
-            ctx.fillStyle = '#bae6fd';
-            ctx.font = '12px Poppins';
-            ctx.fillText(`${maxISI}ms`, 2, padding + 4);
-            ctx.fillText(`${minISI}ms`, 2, padding + height + 4);
+            ctx.stroke(); ctx.fillStyle = '#bae6fd'; ctx.font = '12px Poppins'; ctx.fillText(`${maxISI}ms`, 2, padding + 4); ctx.fillText(`${minISI}ms`, 2, padding + height + 4);
         }
 
-        /**
-         * Exports
-         */
         function exportCSV() {
             if(state.history.length === 0) return;
             const headers = "trial,currDigit,prevDigit,userAnswer,correctAnswer,correctness,rt,isPremature,isi,mode\n";
-            const rows = state.history.map(d => 
-                `${d.trial},${d.currDigit},${d.prevDigit},${d.userAnswer||''},${d.correctAnswer},${d.correctness},${d.rt||''},${d.isPremature},${d.isi},${d.mode}`
-            ).join('\n');
+            const rows = state.history.map(d => `${d.trial},${d.currDigit},${d.prevDigit},${d.userAnswer||''},${d.correctAnswer},${d.correctness},${d.rt||''},${d.isPremature},${d.isi},${d.mode}`).join('\n');
             downloadFile(headers + rows, `pasat_data_${Date.now()}.csv`, 'text/csv');
         }
 
         function exportJSON() {
-            if(state.history.length === 0) return;
-            const data = JSON.stringify(state.history, null, 2);
-            downloadFile(data, `pasat_data_${Date.now()}.json`, 'application/json');
+            if(state.history.length === 0) return; const data = JSON.stringify(state.history, null, 2); downloadFile(data, `pasat_data_${Date.now()}.json`, 'application/json');
         }
 
         function downloadFile(content, filename, type) {
-            const blob = new Blob([content], { type: type });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            const blob = new Blob([content], { type: type }); const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = filename;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
         }
 
         window.addEventListener('DOMContentLoaded', init);
